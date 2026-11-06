@@ -11,6 +11,12 @@ Web app lưu trữ và quản lý link website, tài liệu theo **dự án** v�
 - Thêm nhiều link một lần (mỗi dòng một link, hoặc `Tiêu đề | URL`).
 - Ghim, tag, ghi chú, cảnh báo link trùng.
 - Chọn nhiều tài liệu để đổi loại, chuyển nhóm, chuyển dự án hoặc xóa.
+- **Quản lý công việc dạng Kanban** (như Trello) cho từng dự án:
+  - cột trạng thái tùy chỉnh (mặc định: Cần làm, Đang làm, Chờ duyệt, Hoàn thành), kéo-thả thẻ giữa các cột;
+  - thẻ có ưu tiên, ngày bắt đầu, hạn chót (báo quá hạn / sắp đến hạn), nhãn màu, checklist, mô tả, người phụ trách;
+  - đính kèm tài liệu của dự án vào thẻ;
+  - lọc theo nhóm, ưu tiên, hạn, nhãn; lưu trữ và khôi phục thẻ;
+  - trang “Việc cần chú ý” gom việc quá hạn và sắp đến hạn của mọi dự án.
 - Giao diện sáng/tối, dùng được trên điện thoại.
 
 ## Lưu trữ dữ liệu
@@ -25,7 +31,7 @@ Hãy dùng nút **Dữ liệu → Xuất dữ liệu (.json)** để sao lưu đ
 
 ## Chạy
 
-Toàn bộ app nằm trong một file `index.html`, không cần build.
+Toàn bộ app nằm trong `index.html`, kèm thư viện kéo-thả [SortableJS](https://github.com/SortableJS/Sortable) 1.15.2 (MIT) trong `vendor/`. Không cần build.
 
 - Online: https://giadinhmaitrang-creator.github.io/Link_task_list/ (GitHub Pages, chạy từ nhánh `gh-pages`).
 - Cập nhật web: sửa `index.html` trên `main`, rồi đưa cùng nội dung sang nhánh `gh-pages`: `git push origin main:gh-pages`.

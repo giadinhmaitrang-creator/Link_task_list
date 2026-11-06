@@ -185,6 +185,104 @@ dialog::backdrop{background:rgba(10,20,16,.45)}
 .type-list{display:flex;flex-direction:column;gap:8px}
 
 .local-note{margin:14px 8px 0;font-size:12px;color:var(--muted);line-height:1.5}
+
+/* ---------- mode switch ---------- */
+.modebar{display:inline-flex;gap:4px;padding:4px;border-radius:10px;background:var(--surface-2);border:1px solid var(--line);align-self:flex-start;max-width:100%}
+.modebar button{display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border:0;border-radius:7px;background:transparent;color:var(--muted);font-weight:600;cursor:pointer;white-space:nowrap}
+.modebar button:hover{color:var(--fg)}
+.modebar button.on{background:var(--surface);color:var(--fg);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.modebar button.on svg{color:var(--accent)}
+.over-txt{color:var(--danger)}
+.linkbtn{border:0;background:none;padding:0;color:var(--accent);cursor:pointer;font:inherit;text-decoration:underline}
+.ttag{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--accent)}
+
+/* ---------- board ---------- */
+.board{display:flex;gap:12px;align-items:flex-start;overflow-x:auto;padding-bottom:12px;scroll-snap-type:x proximity;min-height:240px}
+.bcol{flex:1 0 236px;max-width:320px;display:flex;flex-direction:column;gap:8px;background:var(--surface-2);border-radius:12px;padding:10px;scroll-snap-align:start;max-height:calc(100vh - 230px)}
+.bcol.done .bcol-name::before{content:"✓ ";color:var(--accent)}
+.bcol-head{display:flex;align-items:center;gap:8px;padding:2px 4px;min-height:30px}
+.bcol-name{font-weight:600;font-size:13.5px;flex:1;min-width:0;overflow-wrap:anywhere}
+.bcol-list{display:flex;flex-direction:column;gap:8px;min-height:44px;overflow-y:auto;padding:2px}
+.tcard{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 11px;cursor:pointer;display:flex;flex-direction:column;gap:7px;box-shadow:0 1px 1px rgba(20,40,34,.04);touch-action:manipulation}
+.tcard:hover{border-color:color-mix(in srgb,var(--accent) 45%,var(--line))}
+.tcard:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.tcard.p-urgent{box-shadow:inset 3px 0 0 #c23b3b}
+.tcard.p-high{box-shadow:inset 3px 0 0 #c8662b}
+.bcol.done .tcard .ttitle{color:var(--muted)}
+.ttitle{font-weight:500;line-height:1.4;overflow-wrap:anywhere}
+.tlabels{display:flex;flex-wrap:wrap;gap:4px}
+.tlabel{font-size:11px;font-weight:600;padding:1px 7px;border-radius:5px;background:color-mix(in srgb,var(--c) 18%,var(--surface));color:color-mix(in srgb,var(--c) 80%,var(--fg))}
+.tmeta{display:flex;flex-wrap:wrap;gap:6px 9px;align-items:center;font-size:12px;color:var(--muted)}
+.tmeta > span{display:inline-flex;align-items:center;gap:3px}
+.tprio{font-weight:600;color:color-mix(in srgb,var(--c) 85%,var(--fg))}
+.tprio::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--c);margin-right:2px}
+.tdue{display:inline-flex;align-items:center;gap:4px;padding:1px 6px;border-radius:5px;font-size:12px;font-variant-numeric:tabular-nums;color:var(--muted);white-space:nowrap}
+.tdue.over{background:color-mix(in srgb,#c23b3b 16%,var(--surface));color:var(--danger);font-weight:600}
+.tdue.today{background:color-mix(in srgb,#c8662b 18%,var(--surface));color:color-mix(in srgb,#c8662b 85%,var(--fg));font-weight:600}
+.tdue.soon{background:color-mix(in srgb,#b08a12 16%,var(--surface));color:color-mix(in srgb,#b08a12 85%,var(--fg))}
+.tck.ok{color:var(--accent);font-weight:600}
+.tavatar{margin-left:auto;width:24px;height:24px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-size:10.5px;font-weight:700;display:inline-grid!important;place-items:center}
+.tghost{opacity:.35;border-style:dashed}
+.tchosen{box-shadow:var(--shadow)}
+.tdrag{transform:rotate(2deg)}
+.qadd-btn{display:flex;align-items:center;gap:6px;padding:7px 8px;border:0;border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;font-weight:500;text-align:left}
+.qadd-btn:hover{background:var(--surface);color:var(--fg)}
+.qadd-form{display:flex;flex-direction:column;gap:6px}
+.qadd-form textarea{width:100%;padding:8px 10px;border:1px solid var(--accent);border-radius:8px;background:var(--surface);resize:vertical;font:inherit}
+.qadd-form .row{display:flex;gap:6px}
+
+/* ---------- attention list ---------- */
+.trow{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto auto;gap:8px 12px;align-items:center;padding:10px 14px;border-top:1px solid var(--line);cursor:pointer}
+.trow:first-child{border-top:0}
+.trow:hover{background:color-mix(in srgb,var(--surface-2) 60%,transparent)}
+.trow-title{font-weight:600;overflow-wrap:anywhere}
+.pdot{width:10px;height:10px;border-radius:50%;background:var(--c)}
+.ptable-wrap{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:12px}
+.ptable{width:100%;border-collapse:collapse;font-size:13.5px}
+.ptable th{text-align:left;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;padding:9px 14px;background:var(--surface-2)}
+.ptable td{padding:9px 14px;border-top:1px solid var(--line)}
+.ptable tbody tr{cursor:pointer}
+.ptable tbody tr:hover{background:var(--surface-2)}
+.ptable .num{text-align:right;font-variant-numeric:tabular-nums;font-family:var(--f-mono)}
+.ptable .proj-dot{display:inline-block;vertical-align:-1px}
+
+/* ---------- task dialog ---------- */
+.dlg-sub{color:var(--muted);font-size:13px}
+.row3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.field input[type=date]{padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);width:100%}
+.label-pick{display:flex;flex-wrap:wrap;gap:6px}
+.lpick{padding:4px 10px;border-radius:999px;border:1px solid color-mix(in srgb,var(--c) 40%,var(--line));background:transparent;color:var(--fg);cursor:pointer;font-size:12.5px}
+.lpick.on{background:color-mix(in srgb,var(--c) 22%,var(--surface));border-color:var(--c);font-weight:600}
+.ckbar{height:6px;border-radius:3px;background:var(--surface-2);overflow:hidden}
+.ckbar span{display:block;height:100%;background:var(--accent);transition:width .2s}
+.cklist{display:flex;flex-direction:column;gap:2px}
+.ckrow{display:flex;align-items:center;gap:8px}
+.ckrow input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent);flex:none}
+.ckrow .ck-text{flex:1;min-width:0;border:1px solid transparent;background:transparent;padding:5px 6px;border-radius:6px}
+.ckrow .ck-text:hover,.ckrow .ck-text:focus{border-color:var(--line);background:var(--bg)}
+.ckrow .ck-text.done{text-decoration:line-through;color:var(--muted)}
+.ck-add{display:flex;gap:6px}
+.ck-add input{flex:1;min-width:0;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.att-list{display:flex;flex-direction:column;gap:4px}
+.attrow{display:flex;align-items:center;gap:8px;min-width:0}
+.attrow a,.attrow span:not(.badge){flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--fg)}
+.attrow a:hover{color:var(--accent)}
+.attrow .badge{height:22px;min-width:36px;font-size:10.5px}
+#tk-att-pick{padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);width:100%}
+.tk-meta{margin:0;font-size:12px;color:var(--muted)}
+.bs-list{display:flex;flex-direction:column;gap:6px}
+.bs-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.bs-row input[type=text]{flex:1 1 180px;min-width:0;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.bs-row input[type=color]{width:36px;height:32px;padding:2px;border:1px solid var(--line);border-radius:6px;background:var(--bg);cursor:pointer}
+.bs-done{font-size:12.5px;color:var(--muted)}
+.icon-btn:disabled{opacity:.35;cursor:default}
+@media (max-width:640px){
+  .row3{grid-template-columns:1fr 1fr}
+  .row3 .field:last-child{grid-column:1 / -1}
+  .bcol{flex-basis:82vw;max-height:none}
+  .trow{grid-template-columns:auto minmax(0,1fr) auto}
+}
+
 /* category tree */
 .cat-sum{display:none}
 #cat > summary::-webkit-details-marker{display:none}
@@ -334,6 +432,7 @@ dialog::backdrop{background:rgba(10,20,16,.45)}
     </details>
   </aside>
   <main class="main">
+    <div id="modeBar"></div>
     <section id="projHead"></section>
     <div id="tabs"></div>
     <div class="toolbar" id="toolbar"></div>
@@ -410,6 +509,57 @@ dialog::backdrop{background:rgba(10,20,16,.45)}
   <div class="dlg-foot"><button class="btn" type="button" data-close>Hủy</button><button class="btn primary" type="submit">Lưu nhóm</button></div>
 </form></dialog>
 
+<!-- Task dialog -->
+<dialog id="dlgTask" class="wide"><form class="dlg" id="formTask" method="dialog">
+  <div class="dlg-head"><h3 id="taskDlgTitle">Công việc</h3><span class="dlg-sub" id="tk-projname"></span></div>
+  <div class="dlg-body">
+    <div class="field" id="tk-proj-wrap"><label for="tk-proj">Dự án</label><select id="tk-proj"></select></div>
+    <div class="field"><label for="tk-title">Tên công việc</label><input type="text" id="tk-title" required maxlength="200" placeholder="VD: Hoàn thiện ma trận phân quyền CRM"></div>
+    <div class="row3">
+      <div class="field"><label for="tk-col">Trạng thái</label><select id="tk-col"></select></div>
+      <div class="field"><label for="tk-prio">Ưu tiên</label><select id="tk-prio"></select></div>
+      <div class="field"><label for="tk-group">Nhóm</label><select id="tk-group"></select></div>
+    </div>
+    <div class="field" id="tk-newgroup-wrap" hidden><label for="tk-newgroup">Tên nhóm mới</label><input type="text" id="tk-newgroup" maxlength="80" placeholder="VD: Thanh toán, Đăng nhập, Giai đoạn 2"></div>
+    <div class="row3">
+      <div class="field"><label for="tk-start">Ngày bắt đầu</label><input type="date" id="tk-start"></div>
+      <div class="field"><label for="tk-due">Hạn chót</label><input type="date" id="tk-due"></div>
+      <div class="field"><label for="tk-assignee">Người phụ trách</label><input type="text" id="tk-assignee" maxlength="60" placeholder="Không bắt buộc"></div>
+    </div>
+    <div class="field"><label>Nhãn</label><div class="label-pick" id="tk-labels"></div></div>
+    <div class="field"><label for="tk-desc">Mô tả</label><textarea id="tk-desc" rows="4" maxlength="5000" placeholder="Chi tiết, yêu cầu, ghi chú…"></textarea></div>
+    <div class="field"><label for="tk-ck-new">Checklist <span class="count" id="tk-ck-count"></span></label>
+      <div class="ckbar" id="tk-ck-bar" hidden><span></span></div>
+      <div class="cklist" id="tk-ck"></div>
+      <div class="ck-add write-only"><input type="text" id="tk-ck-new" placeholder="Thêm việc con, nhấn Enter"><button type="button" class="btn" id="tk-ck-addbtn">Thêm</button></div></div>
+    <div class="field"><label for="tk-att-pick">Tài liệu đính kèm</label><div class="att-list" id="tk-att"></div><select id="tk-att-pick"></select></div>
+    <p class="tk-meta" id="tk-meta"></p>
+  </div>
+  <div class="dlg-foot"><button class="btn danger" type="button" id="tk-del" style="margin-right:auto">Xóa</button><button class="btn" type="button" id="tk-archive">Lưu trữ</button><button class="btn" type="button" data-close>Đóng</button><button class="btn primary write-only" type="submit">Lưu</button></div>
+</form></dialog>
+
+<!-- Board settings dialog -->
+<dialog id="dlgBoard" class="wide"><form class="dlg" id="formBoard" method="dialog">
+  <div class="dlg-head"><h3>Cài đặt bảng công việc</h3><span class="dlg-sub" id="bs-proj"></span></div>
+  <div class="dlg-body">
+    <h4 class="sec-title" style="margin:0">Cột trạng thái</h4>
+    <p class="hint" style="margin:0;color:var(--muted);font-size:12.5px">Thẻ trong “Cột hoàn thành” được tính là đã xong và không bị báo quá hạn. Xóa cột thì các thẻ trong cột chuyển sang cột đầu tiên.</p>
+    <div class="bs-list" id="bs-cols"></div>
+    <div><button type="button" class="btn" id="bs-addcol">+ Thêm cột</button></div>
+    <h4 class="sec-title" style="margin:10px 0 0">Nhãn</h4>
+    <div class="bs-list" id="bs-labels"></div>
+    <div><button type="button" class="btn" id="bs-addlbl">+ Thêm nhãn</button></div>
+  </div>
+  <div class="dlg-foot"><button class="btn" type="button" data-close>Hủy</button><button class="btn primary" type="submit">Lưu cài đặt</button></div>
+</form></dialog>
+
+<!-- Archived cards dialog -->
+<dialog id="dlgArchive" class="wide"><div class="dlg">
+  <div class="dlg-head"><h3>Thẻ đã lưu trữ</h3><span class="dlg-sub" id="ar-proj"></span></div>
+  <div class="dlg-body" id="ar-list"></div>
+  <div class="dlg-foot"><button class="btn" type="button" data-close>Đóng</button></div>
+</div></dialog>
+
 <!-- Confirm dialog -->
 <dialog id="dlgConfirm"><form class="dlg" method="dialog">
   <div class="dlg-head"><h3 id="cfTitle">Xác nhận</h3></div>
@@ -419,6 +569,7 @@ dialog::backdrop{background:rgba(10,20,16,.45)}
 
 <div class="toast" id="toast" hidden></div>
 
+<script src="vendor/sortable-1.15.2.min.js"></script>
 <script>
 (() => {
 const PALETTE = ['#1d6b5f','#3b6fd6','#2f8f5b','#c8662b','#c23b3b','#9b4fc7','#b08a12','#1f8a8a','#d0457a','#5a6b7d'];
@@ -441,6 +592,13 @@ const ICON = {
   del:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>',
   caret:'<svg class="caret" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>',
   more:'<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>',
+  doc:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg>',
+  board:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="5" height="16" rx="1.5"/><rect x="10" y="4" width="5" height="10" rx="1.5"/><rect x="17" y="4" width="4" height="13" rx="1.5"/></svg>',
+  cal:'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+  check:'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="m8 12 3 3 5-6"/></svg>',
+  clip:'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21 11-8.5 8.5a5 5 0 0 1-7-7L14 4a3.5 3.5 0 0 1 5 5l-8.5 8.5a2 2 0 0 1-3-3L15 7"/></svg>',
+  lines:'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"/></svg>',
+  archive:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="5" rx="1"/><path d="M5 9v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9M10 13h4"/></svg>',
   folder:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>',
   stack:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/></svg>',
   plus:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>',
@@ -454,14 +612,18 @@ const store = {
 };
 
 // ---------- state ----------
-let db = null, canWrite = true, loaded = {p:false,l:false,g:false};
+let db = null, canWrite = true, loaded = {p:false,l:false,g:false,t:false};
 let projects = [];   // [{id,...}]
 let groups = [];     // [{id,projectId,name}]
 let links = [];      // [{id,...}]
+let tasks = [];      // [{id,projectId,columnId,...}]
 let types = DEFAULT_TYPES;
 const ui = {
   project: store.get('project','all'),
   q: '', type: 'all', group: 'all',
+  mode: store.get('mode','docs') === 'tasks' ? 'tasks' : 'docs',
+  tf: {prio:'all', due:'all', label:'all'},
+  qadd: null,
   view: store.get('view','group'),
   sort: store.get('sort','new'),
   selected: new Set(),
@@ -573,8 +735,12 @@ function render(){
   document.querySelectorAll('.write-only').forEach(el => el.hidden = !canWrite);
   if (ui.project !== 'all' && loaded.p && !projById(ui.project)) ui.project = 'all';
   if (ui.group !== 'all' && ui.group !== '_none' && loaded.g && !groupById(ui.group)) ui.group = 'all';
-  renderSidebar(); renderHead(); renderTabs(); renderToolbar(); renderContent(); renderBulk();
+  renderSidebar(); renderModeBar(); renderHead(); renderTabs(); renderToolbar(); renderContent(); renderBulk();
 }
+const renderHead = () => ui.mode === 'tasks' ? renderTasksHead() : renderDocsHead();
+const renderToolbar = () => ui.mode === 'tasks' ? renderTasksToolbar() : renderDocsToolbar();
+const renderContent = () => ui.mode === 'tasks' ? renderTasksContent() : renderDocsContent();
+const modeItems = () => ui.mode === 'tasks' ? liveTasks().filter(isOpen) : links;
 const projOrder = () => projects.slice().sort((a,b) => String(a.name).localeCompare(String(b.name),'vi'));
 function filtered(){
   let list = scopeLinks().filter(matchQ);
@@ -620,13 +786,13 @@ function renderSidebar(){
   const el = $('#projList');
   if (!db || !loaded.p) { el.innerHTML = ''; return; }
   if (ui.openDefault && projects.length) { projects.forEach(p => ui.open.add(p.id)); ui.openDefault = false; }
-  const by = {};
-  links.forEach(l => { const s = by[l.projectId] = by[l.projectId] || {n:0, t:{}}; const t = typeById(l.type).id; s.n++; s.t[t] = (s.t[t]||0) + 1; });
-  let h = `<button type="button" class="tree-item root${ui.project==='all'?' active':''}" data-nav="all"><span class="tree-ico">${ICON.stack}</span><span class="proj-name">Tất cả tài liệu</span><span class="count">${links.length}</span></button>`;
+  const by = {}, items = modeItems();
+  items.forEach(l => { const s = by[l.projectId] = by[l.projectId] || {n:0, t:{}}; const t = typeById(l.type).id; s.n++; s.t[t] = (s.t[t]||0) + 1; });
+  let h = `<button type="button" class="tree-item root${ui.project==='all'?' active':''}" data-nav="all"><span class="tree-ico">${ui.mode === 'tasks' ? ICON.board : ICON.stack}</span><span class="proj-name">${ui.mode === 'tasks' ? 'Tất cả công việc' : 'Tất cả tài liệu'}</span><span class="count">${items.length}</span></button>`;
   projOrder().forEach(p => {
     const s = by[p.id] || {n:0, t:{}}, open = ui.open.has(p.id);
     const gc = {}; let none = 0;
-    links.forEach(l => { if (l.projectId !== p.id) return; const g = linkGroup(l); if (g) gc[g.id] = (gc[g.id]||0) + 1; else none++; });
+    items.forEach(l => { if (l.projectId !== p.id) return; const g = linkGroup(l); if (g) gc[g.id] = (gc[g.id]||0) + 1; else none++; });
     const sub = (gid, name, n, cls='') => `<button type="button" class="tree-item sub${cls}${ui.project===p.id&&ui.group===gid?' active':''}" data-nav="${esc(p.id)}" data-navgroup="${esc(gid)}"><span class="gico">${ICON.folder}</span><span class="proj-name">${esc(name)}</span><span class="count">${n}</span></button>`;
     const kids = groupsOf(p.id).map(g => sub(g.id, g.name, gc[g.id]||0)).join('')
       + (none ? sub('_none', 'Chưa phân nhóm', none, ' muted') : '')
@@ -642,7 +808,7 @@ function renderSidebar(){
   el.innerHTML = h;
 }
 
-function renderHead(){
+function renderDocsHead(){
   const h = $('#projHead');
   if (!db || !loaded.p || !projects.length) { h.innerHTML = ''; return; }
   const p = ui.project === 'all' ? null : projById(ui.project);
@@ -664,14 +830,14 @@ function renderHead(){
 function renderTabs(){
   const el = $('#tabs');
   if (!db || !loaded.p || !projects.length) { el.innerHTML = ''; return; }
-  const cnt = {}; links.forEach(l => cnt[l.projectId] = (cnt[l.projectId]||0) + 1);
-  const tabs = [{id:'all', name:'Tất cả', n:links.length}].concat(projOrder().map(p => ({id:p.id, name:p.name, n:cnt[p.id]||0, color:p.color||PALETTE[0]})));
+  const cnt = {}, items = modeItems(); items.forEach(l => cnt[l.projectId] = (cnt[l.projectId]||0) + 1);
+  const tabs = [{id:'all', name:'Tất cả', n:items.length}].concat(projOrder().map(p => ({id:p.id, name:p.name, n:cnt[p.id]||0, color:p.color||PALETTE[0]})));
   el.innerHTML = `<div class="tabs" role="tablist" aria-label="Chọn dự án">${tabs.map(t => `<button type="button" role="tab" class="tab${ui.project===t.id?' on':''}" aria-selected="${ui.project===t.id}" data-nav="${esc(t.id)}">${t.color?`<span class="proj-dot" style="--c:${esc(t.color)}"></span>`:''}<span class="tab-name">${esc(t.name)}</span><span class="count">${t.n}</span></button>`).join('')}</div>`;
   const on = el.querySelector('.tab.on'), bar = el.querySelector('.tabs');
   if (on && bar) bar.scrollLeft = Math.max(0, on.offsetLeft - bar.clientWidth/2 + on.offsetWidth/2);
 }
 
-function renderToolbar(){
+function renderDocsToolbar(){
   const tb = $('#toolbar');
   if (!db || !loaded.l || !projects.length || !scopeLinks().length) { tb.innerHTML = ''; return; }
   const scope = scopeLinks().filter(matchQ);
@@ -686,6 +852,7 @@ function renderToolbar(){
     </div>`;
 }
 
+const linkTaskCount = id => liveTasks().filter(t => (t.linkIds||[]).includes(id)).length;
 function linkRow(l){
   const t = typeById(l.type), p = projById(l.projectId);
   const tags = (l.tags||[]).map(x => `<span class="tag">#${esc(x)}</span>`).join('');
@@ -698,7 +865,7 @@ function linkRow(l){
     <span class="badge" style="--c:${esc(t.color)}" title="${esc(t.name)}">${esc(t.code||'WEB')}</span>
     <div class="lmain">
       ${safe?`<a class="ltitle" href="${esc(safe)}" target="_blank" rel="noopener noreferrer">${esc(l.title||hostOf(l.url))}</a>`:`<span class="ltitle">${esc(l.title)}</span>`}${l.pinned?`<span class="pin-ico" title="Đã ghim">${ICON.pin}</span>`:''}
-      <div class="lmeta">${proj}${gchip}<span class="domain">${esc(hostOf(l.url))}</span><span class="date" title="Ngày thêm">${fmtDate(l.createdAt)}</span>${tags}</div>
+      <div class="lmeta">${proj}${gchip}<span class="domain">${esc(hostOf(l.url))}</span><span class="date" title="Ngày thêm">${fmtDate(l.createdAt)}</span>${linkTaskCount(l.id) ? `<span class="ttag" title="Số công việc đính kèm tài liệu này">${ICON.board}${linkTaskCount(l.id)} việc</span>` : ''}${tags}</div>
       ${l.note?`<p class="note" title="${esc(l.note)}">${esc(l.note)}</p>`:''}
     </div>
     <div class="lact">
@@ -709,7 +876,7 @@ function linkRow(l){
     </div></article>`;
 }
 
-function renderContent(){
+function renderDocsContent(){
   const c = $('#content');
   if (!db) { c.innerHTML = `<div class="empty"><h3>Không đọc được dữ liệu</h3><p>Trình duyệt đang chặn bộ nhớ của trang. Hãy tắt chế độ ẩn danh hoặc cho phép lưu dữ liệu trang web rồi tải lại.</p></div>`; return; }
   if (!loaded.p || !loaded.l) return;
@@ -743,7 +910,7 @@ function renderBulk(){
   const b = $('#bulkBar');
   document.body.classList.toggle('has-sel', ui.selected.size > 0);
   [...ui.selected].forEach(id => { if (!links.some(l => l.id === id)) ui.selected.delete(id); });
-  if (!canWrite || !ui.selected.size) { b.hidden = true; b.innerHTML = ''; return; }
+  if (!canWrite || !ui.selected.size || ui.mode === 'tasks') { b.hidden = true; b.innerHTML = ''; return; }
   b.hidden = false;
   b.className = 'bulkbar';
   b.innerHTML = `<strong>Đã chọn ${ui.selected.size} link</strong>
@@ -756,7 +923,7 @@ function renderBulk(){
 // ---------- events: navigation ----------
 const isNarrow = () => window.matchMedia('(max-width:820px)').matches;
 function nav(id, group){
-  ui.project = id; ui.group = (id !== 'all' && group) || 'all'; ui.type = 'all'; ui.limit = PAGE; ui.selected.clear();
+  ui.project = id; ui.group = (id !== 'all' && group) || 'all'; ui.type = 'all'; ui.limit = PAGE; ui.selected.clear(); ui.qadd = null; ui.tf.label = 'all';
   if (id !== 'all') { ui.open.add(id); store.set('open', [...ui.open]); }
   store.set('project', id); render();
 }
@@ -791,6 +958,9 @@ document.addEventListener('click', e => {
   else if (act === 'editGroup') openGroup(ui.project, groupById(ui.group));
   else if (act === 'delGroup') delGroup(groupById(ui.group));
   else if (act === 'bulk') openBulk();
+  else if (act === 'addTask') openTask();
+  else if (act === 'boardSettings') openBoardSettings();
+  else if (act === 'archived') openArchived();
 });
 $('#btnNewProj').addEventListener('click', () => openProj());
 $('#content').addEventListener('click', async e => {
@@ -857,9 +1027,9 @@ $('#formProj').addEventListener('submit', async e => {
 });
 async function delProj(p){
   if (!p) return;
-  const own = links.filter(l => l.projectId === p.id);
-  if (!await confirmAsk('Xóa dự án', `Xóa dự án “${p.name}” cùng ${groupsOf(p.id).length} nhóm và ${own.length} tài liệu bên trong? Không thể hoàn tác.`)) return;
-  const ok = await run(async () => { await inChunks(own, l => db.collection('links').doc(l.id).delete()); await inChunks(groupsOf(p.id), g => db.collection('groups').doc(g.id).delete()); await db.collection('projects').doc(p.id).delete(); }, 'Đã xóa dự án');
+  const own = links.filter(l => l.projectId === p.id), ownT = tasks.filter(t => t.projectId === p.id);
+  if (!await confirmAsk('Xóa dự án', `Xóa dự án “${p.name}” cùng ${groupsOf(p.id).length} nhóm, ${own.length} tài liệu và ${ownT.length} công việc bên trong? Không thể hoàn tác.`)) return;
+  const ok = await run(async () => { await inChunks(ownT, t => db.collection('tasks').doc(t.id).delete()); await inChunks(own, l => db.collection('links').doc(l.id).delete()); await inChunks(groupsOf(p.id), g => db.collection('groups').doc(g.id).delete()); await db.collection('projects').doc(p.id).delete(); }, 'Đã xóa dự án');
   if (ok) { ui.project = 'all'; store.set('project','all'); render(); }
 }
 
@@ -1001,9 +1171,9 @@ $('#formGroup').addEventListener('submit', async e => {
 });
 async function delGroup(g){
   if (!g) return;
-  const own = links.filter(l => l.groupId === g.id);
-  if (!await confirmAsk('Xóa nhóm', `Xóa nhóm “${g.name}”? ${own.length} tài liệu trong nhóm vẫn được giữ lại và chuyển về “Chưa phân nhóm”.`)) return;
-  const ok = await run(async () => { await inChunks(own, l => db.collection('links').doc(l.id).update({groupId: '', updatedAt: Date.now()})); await db.collection('groups').doc(g.id).delete(); }, 'Đã xóa nhóm');
+  const own = links.filter(l => l.groupId === g.id), ownT = tasks.filter(t => t.groupId === g.id);
+  if (!await confirmAsk('Xóa nhóm', `Xóa nhóm “${g.name}”? ${own.length} tài liệu và ${ownT.length} công việc trong nhóm vẫn được giữ lại và chuyển về “Chưa phân nhóm”.`)) return;
+  const ok = await run(async () => { await inChunks(ownT, t => db.collection('tasks').doc(t.id).update({groupId: '', updatedAt: Date.now()})); await inChunks(own, l => db.collection('links').doc(l.id).update({groupId: '', updatedAt: Date.now()})); await db.collection('groups').doc(g.id).delete(); }, 'Đã xóa nhóm');
   if (ok) nav(g.projectId);
 }
 
@@ -1049,6 +1219,453 @@ $('#formTypes').addEventListener('submit', async e => {
   if (await run(() => db.doc('config/types').set({list, updatedAt: Date.now()}), 'Đã lưu loại link')) $('#dlgTypes').close();
 });
 
+// ---------- tasks (Kanban) ----------
+const DEFAULT_COLUMNS = [
+  {id:'todo',   name:'Cần làm'},
+  {id:'doing',  name:'Đang làm'},
+  {id:'review', name:'Chờ duyệt'},
+  {id:'done',   name:'Hoàn thành', done:true},
+];
+const PRIOS = [
+  {id:'urgent', name:'Khẩn',       color:'#c23b3b'},
+  {id:'high',   name:'Cao',        color:'#c8662b'},
+  {id:'med',    name:'Trung bình', color:'#b08a12'},
+  {id:'low',    name:'Thấp',       color:'#5a6b7d'},
+];
+const LABEL_COLORS = ['#c23b3b','#c8662b','#b08a12','#2f8f5b','#1f8a8a','#3b6fd6','#9b4fc7','#d0457a','#5a6b7d'];
+const prioById = id => PRIOS.find(p => p.id === id) || null;
+const boardCols = p => (p && Array.isArray(p.columns) && p.columns.length) ? p.columns : DEFAULT_COLUMNS;
+const boardLabels = p => (p && Array.isArray(p.labels)) ? p.labels : [];
+const colOf = t => { const cols = boardCols(projById(t.projectId)); return cols.find(c => c.id === t.columnId) || cols[0]; };
+const isDone = t => !!colOf(t).done;
+const isOpen = t => !t.archived && !isDone(t);
+const liveTasks = () => tasks.filter(t => !t.archived && projById(t.projectId));
+const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+function todayStr(off=0){ const d = new Date(); d.setDate(d.getDate() + off); const p = n => String(n).padStart(2,'0'); return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`; }
+function dueState(t){
+  if (!t.due || isDone(t)) return '';
+  const td = todayStr();
+  if (t.due < td) return 'over';
+  if (t.due === td) return 'today';
+  if (t.due <= todayStr(2)) return 'soon';
+  return '';
+}
+function fmtDay(s){ if (!s) return ''; const [y,m,d] = s.split('-'); return y === String(new Date().getFullYear()) ? `${d}/${m}` : `${d}/${m}/${y}`; }
+const initials = n => String(n||'').trim().split(/\s+/).slice(-2).map(w => w[0] || '').join('').toUpperCase();
+function matchTaskQ(t){
+  if (!ui.q) return true;
+  const q = ui.q.toLowerCase(), p = projById(t.projectId), g = linkGroup(t);
+  const lbl = boardLabels(p).filter(l => (t.labels||[]).includes(l.id)).map(l => l.name).join(' ');
+  return [t.title, t.desc, t.assignee, (t.checklist||[]).map(c => c.text).join(' '), lbl, p && p.name, g && g.name].some(v => String(v||'').toLowerCase().includes(q));
+}
+function scopeTasks(){
+  let a = liveTasks();
+  if (ui.project !== 'all') a = a.filter(t => t.projectId === ui.project);
+  if (ui.group === '_none') a = a.filter(t => !linkGroup(t));
+  else if (ui.group !== 'all') a = a.filter(t => t.groupId === ui.group);
+  return a;
+}
+function filteredTasks(){
+  const f = ui.tf, td = todayStr(), w = todayStr(7);
+  return scopeTasks().filter(matchTaskQ).filter(t => {
+    if (f.prio !== 'all' && (t.priority||'') !== f.prio) return false;
+    if (f.label !== 'all' && !(t.labels||[]).includes(f.label)) return false;
+    if (f.due === 'over' && dueState(t) !== 'over') return false;
+    if (f.due === 'today' && !(t.due === td && !isDone(t))) return false;
+    if (f.due === 'week' && !(t.due && t.due >= td && t.due <= w && !isDone(t))) return false;
+    if (f.due === 'none' && t.due) return false;
+    return true;
+  });
+}
+const byOrder = (a,b) => (a.order ?? a.createdAt ?? 0) - (b.order ?? b.createdAt ?? 0);
+const tasksFilterActive = () => !!ui.q || ui.tf.prio !== 'all' || ui.tf.due !== 'all' || ui.tf.label !== 'all';
+
+// ----- head / toolbar -----
+function renderModeBar(){
+  const el = $('#modeBar');
+  if (!db || !loaded.p || !projects.length) { el.innerHTML = ''; return; }
+  const inP = x => ui.project === 'all' || x.projectId === ui.project;
+  const nd = links.filter(inP).length, nt = liveTasks().filter(inP).filter(isOpen).length;
+  el.innerHTML = `<div class="modebar" role="tablist" aria-label="Chế độ xem">
+    <button type="button" role="tab" data-mode="docs" class="${ui.mode==='docs'?'on':''}" aria-selected="${ui.mode==='docs'}">${ICON.doc}Tài liệu<span class="count">${nd}</span></button>
+    <button type="button" role="tab" data-mode="tasks" class="${ui.mode==='tasks'?'on':''}" aria-selected="${ui.mode==='tasks'}">${ICON.board}Công việc<span class="count">${nt}</span></button>
+  </div>`;
+}
+function renderTasksHead(){
+  const h = $('#projHead');
+  if (!db || !loaded.p || !projects.length) { h.innerHTML = ''; return; }
+  const p = ui.project === 'all' ? null : projById(ui.project);
+  const scope = scopeTasks(), open = scope.filter(isOpen), over = open.filter(t => dueState(t) === 'over');
+  const g = p && ui.group !== 'all' && ui.group !== '_none' ? groupById(ui.group) : null;
+  const inGroup = p && ui.group !== 'all';
+  const meta = `${open.length} việc đang mở${over.length ? ` · <span class="over-txt">${over.length} quá hạn</span>` : ''} · ${scope.length - open.length} đã xong`;
+  const archived = p ? tasks.filter(t => t.archived && t.projectId === p.id).length : 0;
+  const items = [];
+  if (g) items.push(`<button type="button" data-act="editGroup">Đổi tên nhóm</button>`, `<button type="button" data-act="delGroup" class="danger">Xóa nhóm</button>`, `<hr>`);
+  if (p) items.push(`<button type="button" data-act="boardSettings">Cài đặt cột và nhãn</button>`, `<button type="button" data-act="archived">Thẻ đã lưu trữ (${archived})</button>`, `<hr>`, `<button type="button" data-act="addGroup">Thêm nhóm</button>`, `<button type="button" data-act="editProj">Sửa dự án</button>`, `<button type="button" data-act="delProj" class="danger">Xóa dự án</button>`);
+  const menu = p && canWrite ? `<div class="menu-wrap"><button class="btn" type="button" data-act="projMenu" aria-haspopup="true" aria-expanded="false" title="Tùy chọn" aria-label="Tùy chọn" style="padding:7px 9px">${ICON.more}</button><div class="menu" id="projMenu" hidden>${items.join('')}</div></div>` : '';
+  const dot = p ? `<span class="proj-dot" style="--c:${esc(p.color||PALETTE[0])}"></span>` : '';
+  const crumb = inGroup ? `<button type="button" class="crumb" data-nav="${esc(p.id)}">${dot}${esc(p.name)} ›</button>` : '';
+  const title = inGroup ? esc(g ? g.name : 'Chưa phân nhóm') : p ? `${dot}${esc(p.name)}` : 'Việc cần chú ý';
+  const btns = canWrite ? `<button class="btn primary" type="button" data-act="addTask">${ICON.plus}Thêm công việc</button>` : '';
+  h.innerHTML = `<div class="phead"><div class="phead-text">${crumb}<h1>${title}</h1><p>${meta}</p></div><div class="phead-actions">${btns}${menu}</div></div>`;
+}
+function renderTasksToolbar(){
+  const tb = $('#toolbar');
+  if (!db || !loaded.t || !projects.length || !scopeTasks().length) { tb.innerHTML = ''; return; }
+  const p = ui.project === 'all' ? null : projById(ui.project);
+  const lbls = boardLabels(p);
+  if (ui.tf.label !== 'all' && !lbls.some(l => l.id === ui.tf.label)) ui.tf.label = 'all';
+  const n = filteredTasks().length;
+  const opt = (v, l, cur) => `<option value="${esc(v)}"${cur===v?' selected':''}>${esc(l)}</option>`;
+  tb.innerHTML = `<span class="tb-count">${n} công việc${ui.q ? ` khớp “${esc(ui.q)}”` : ''}${tasksFilterActive() ? ` · <button type="button" class="linkbtn" data-tf-clear="1">Bỏ lọc</button>` : ''}</span>
+    <div class="tb-right">
+      <select class="sm" id="tfPrio" aria-label="Lọc theo ưu tiên">${opt('all','Mọi ưu tiên',ui.tf.prio)}${PRIOS.map(x => opt(x.id, x.name, ui.tf.prio)).join('')}</select>
+      <select class="sm" id="tfDue" aria-label="Lọc theo hạn">${[['all','Mọi hạn'],['over','Quá hạn'],['today','Hạn hôm nay'],['week','Hạn 7 ngày tới'],['none','Không có hạn']].map(([v,l]) => opt(v,l,ui.tf.due)).join('')}</select>
+      ${p && lbls.length ? `<select class="sm" id="tfLabel" aria-label="Lọc theo nhãn">${opt('all','Mọi nhãn',ui.tf.label)}${lbls.map(l => opt(l.id, l.name, ui.tf.label)).join('')}</select>` : ''}
+    </div>`;
+}
+
+// ----- board -----
+function taskCard(t){
+  const p = projById(t.projectId);
+  const lbls = boardLabels(p).filter(l => (t.labels||[]).includes(l.id));
+  const pr = prioById(t.priority), ds = dueState(t);
+  const ck = t.checklist || [], ckDone = ck.filter(c => c.done).length;
+  const att = (t.linkIds||[]).filter(id => links.some(l => l.id === id)).length;
+  const g = linkGroup(t);
+  return `<article class="tcard${pr ? ' p-' + pr.id : ''}" data-tid="${esc(t.id)}" tabindex="0" aria-label="${esc(t.title)}">
+    ${lbls.length ? `<div class="tlabels">${lbls.map(l => `<span class="tlabel" style="--c:${esc(l.color)}">${esc(l.name)}</span>`).join('')}</div>` : ''}
+    <div class="ttitle">${esc(t.title)}</div>
+    <div class="tmeta">
+      ${pr ? `<span class="tprio" style="--c:${pr.color}">${esc(pr.name)}</span>` : ''}
+      ${t.due ? `<span class="tdue ${ds}" title="Hạn chót">${ICON.cal}${fmtDay(t.due)}</span>` : ''}
+      ${ck.length ? `<span class="tck${ckDone === ck.length ? ' ok' : ''}" title="Checklist">${ICON.check}${ckDone}/${ck.length}</span>` : ''}
+      ${att ? `<span class="tatt" title="Tài liệu đính kèm">${ICON.clip}${att}</span>` : ''}
+      ${t.desc ? `<span class="tdesc" title="Có mô tả">${ICON.lines}</span>` : ''}
+      ${g && ui.group === 'all' ? `<span class="gtag">${ICON.folder}${esc(g.name)}</span>` : ''}
+      ${t.assignee ? `<span class="tavatar" title="${esc(t.assignee)}">${esc(initials(t.assignee))}</span>` : ''}
+    </div>
+  </article>`;
+}
+let sortables = [];
+function renderBoard(c){
+  const p = projById(ui.project), cols = boardCols(p);
+  const list = filteredTasks();
+  const byCol = {}; cols.forEach(col => byCol[col.id] = []);
+  list.forEach(t => byCol[colOf(t).id].push(t));
+  const total = scopeTasks().length;
+  c.innerHTML = `${!total ? `<div class="empty" style="margin-bottom:14px"><h3>${ui.group !== 'all' ? 'Nhóm này chưa có công việc' : 'Dự án chưa có công việc'}</h3><p>Bấm “+ Thêm thẻ” ở cột bất kỳ, hoặc nút “Thêm công việc”. Kéo thẻ giữa các cột để đổi trạng thái.</p></div>` : ''}
+  <div class="board" id="board">${cols.map(col => {
+    const items = byCol[col.id].sort(byOrder);
+    const qopen = ui.qadd === col.id;
+    return `<section class="bcol${col.done ? ' done' : ''}" data-col="${esc(col.id)}">
+      <header class="bcol-head"><span class="bcol-name">${esc(col.name)}</span><span class="count">${items.length}</span>
+        ${col.done && items.length && canWrite ? `<button type="button" class="icon-btn" data-archive-col="${esc(col.id)}" title="Lưu trữ tất cả thẻ trong cột" aria-label="Lưu trữ tất cả thẻ trong cột">${ICON.archive}</button>` : ''}</header>
+      <div class="bcol-list" data-col="${esc(col.id)}">${items.map(taskCard).join('')}</div>
+      ${canWrite ? (qopen
+        ? `<div class="qadd-form"><textarea id="qaddText" rows="2" placeholder="Nhập tên công việc, Enter để thêm"></textarea><div class="row"><button type="button" class="btn primary" data-qadd-save="${esc(col.id)}">Thêm</button><button type="button" class="btn ghost" data-qadd-cancel="1">Đóng</button></div></div>`
+        : `<button type="button" class="qadd-btn" data-qadd="${esc(col.id)}">${ICON.plus}Thêm thẻ</button>`) : ''}
+    </section>`;
+  }).join('')}</div>`;
+  if (ui.qadd) { const ta = $('#qaddText'); if (ta) ta.focus(); }
+  initSortable();
+}
+function initSortable(){
+  sortables.forEach(s => { try { s.destroy(); } catch {} }); sortables = [];
+  if (!window.Sortable || !canWrite) return;
+  document.querySelectorAll('.bcol-list').forEach(el => sortables.push(Sortable.create(el, {
+    group: 'board', animation: 150, delay: 150, delayOnTouchOnly: true, touchStartThreshold: 4,
+    ghostClass: 'tghost', chosenClass: 'tchosen', dragClass: 'tdrag', onEnd: onCardDrop,
+  })));
+}
+function onCardDrop(evt){
+  const t = tasks.find(x => x.id === evt.item.dataset.tid); if (!t) return;
+  const toCol = evt.to.dataset.col;
+  if (evt.from === evt.to && evt.oldIndex === evt.newIndex) return;
+  const ids = [...evt.to.querySelectorAll('.tcard')].map(el => el.dataset.tid);
+  const i = ids.indexOf(t.id);
+  const ord = id => { const x = tasks.find(y => y.id === id); return x ? (x.order ?? x.createdAt ?? 0) : 0; };
+  const prev = i > 0 ? ord(ids[i-1]) : null, next = i < ids.length - 1 ? ord(ids[i+1]) : null;
+  const order = prev != null && next != null ? (prev + next) / 2 : prev != null ? prev + 1000 : next != null ? next - 1000 : Date.now();
+  const col = boardCols(projById(t.projectId)).find(c => c.id === toCol);
+  const patch = {columnId: toCol, order, updatedAt: Date.now()};
+  if (col && col.done && !isDone(t)) patch.doneAt = Date.now();
+  if (col && !col.done) patch.doneAt = null;
+  run(() => db.collection('tasks').doc(t.id).update(patch), col && col.done && !isDone(t) ? `Đã hoàn thành “${t.title}”` : '');
+}
+function nextOrder(pid, colId){
+  const xs = tasks.filter(t => t.projectId === pid && !t.archived && colOf(t).id === colId).map(t => t.order ?? t.createdAt ?? 0);
+  return xs.length ? Math.max(...xs) + 1000 : 1000;
+}
+async function quickAdd(colId){
+  const ta = $('#qaddText'); const title = ta ? ta.value.trim() : ''; if (!title) { if (ta) ta.focus(); return; }
+  const pid = ui.project, now = Date.now();
+  const col = boardCols(projById(pid)).find(c => c.id === colId);
+  const gid = ui.group !== 'all' && ui.group !== '_none' ? ui.group : '';
+  await run(() => db.collection('tasks').doc().set({projectId: pid, groupId: gid, columnId: colId, title, desc: '', priority: '', start: '', due: '', labels: [], checklist: [], linkIds: [], assignee: '', order: nextOrder(pid, colId), archived: false, doneAt: col && col.done ? now : null, createdAt: now, updatedAt: now}));
+}
+
+// ----- attention overview (all projects) -----
+function taskRow(t){
+  const p = projById(t.projectId), g = linkGroup(t), pr = prioById(t.priority), ds = dueState(t), col = colOf(t);
+  return `<div class="trow" data-tid="${esc(t.id)}" tabindex="0" role="button">
+    <span class="pdot" style="--c:${pr ? pr.color : 'var(--line)'}" title="${pr ? 'Ưu tiên ' + esc(pr.name) : 'Chưa đặt ưu tiên'}"></span>
+    <div class="trow-main"><div class="trow-title">${esc(t.title)}</div>
+      <div class="lmeta"><span class="ptag"><span class="proj-dot" style="--c:${esc(p.color||PALETTE[0])};width:8px;height:8px"></span>${esc(p.name)}</span>${g ? `<span class="gtag">${ICON.folder}${esc(g.name)}</span>` : ''}<span class="tag">${esc(col.name)}</span></div></div>
+    ${t.due ? `<span class="tdue ${ds}">${ICON.cal}${fmtDay(t.due)}</span>` : ''}
+  </div>`;
+}
+function renderAttention(c){
+  const list = filteredTasks().filter(isOpen);
+  const all = liveTasks();
+  if (!all.length) {
+    c.innerHTML = `<div class="empty"><h3>Chưa có công việc nào</h3><p>Chọn một dự án ở danh mục bên trái để mở bảng công việc, hoặc thêm ngay.</p>${canWrite ? `<div class="row"><button class="btn primary" type="button" data-act="addTask">${ICON.plus}Thêm công việc</button></div>` : ''}</div>`;
+    return;
+  }
+  const td = todayStr(), w = todayStr(7);
+  const sortDue = a => a.slice().sort((x,y) => (x.due||'').localeCompare(y.due||'') || byOrder(x,y));
+  const over = sortDue(list.filter(t => t.due && t.due < td));
+  const today = sortDue(list.filter(t => t.due === td));
+  const week = sortDue(list.filter(t => t.due && t.due > td && t.due <= w));
+  const sec = (title, items, cls='') => items.length ? `<section class="feed-sec"><h2 class="sec-title ${cls}">${title} <span class="count">${items.length}</span></h2><div class="flat-list">${items.map(taskRow).join('')}</div></section>` : '';
+  const rows = projOrder().map(p => {
+    const ts = all.filter(t => t.projectId === p.id);
+    const op = ts.filter(isOpen);
+    return `<tr data-nav="${esc(p.id)}" tabindex="0"><td><span class="proj-dot" style="--c:${esc(p.color||PALETTE[0])}"></span> ${esc(p.name)}</td><td class="num">${op.length}</td><td class="num${op.some(t => dueState(t)==='over') ? ' over-txt' : ''}">${op.filter(t => dueState(t)==='over').length}</td><td class="num">${ts.length - op.length}</td></tr>`;
+  }).join('');
+  const nothing = !over.length && !today.length && !week.length;
+  c.innerHTML = `<div class="feed">
+    ${nothing ? `<div class="empty"><h3>Không có việc nào quá hạn hoặc sắp đến hạn</h3><p>Các việc có hạn chót trong 7 ngày tới sẽ hiện ở đây.</p></div>` : ''}
+    ${sec('Quá hạn', over, 'over-txt')}${sec('Hạn hôm nay', today)}${sec('Hạn trong 7 ngày tới', week)}
+    <section class="feed-sec"><h2 class="sec-title">Theo dự án</h2><div class="ptable-wrap"><table class="ptable"><thead><tr><th>Dự án</th><th class="num">Đang mở</th><th class="num">Quá hạn</th><th class="num">Đã xong</th></tr></thead><tbody>${rows}</tbody></table></div></section>
+  </div>`;
+}
+function renderTasksContent(){
+  const c = $('#content');
+  if (!db || !loaded.p || !loaded.t) return;
+  if (!projects.length) { renderDocsContent(); return; }
+  if (ui.project === 'all') renderAttention(c); else renderBoard(c);
+}
+
+// ----- task events -----
+$('#modeBar').addEventListener('click', e => {
+  const b = e.target.closest('[data-mode]'); if (!b || b.dataset.mode === ui.mode) return;
+  ui.mode = b.dataset.mode; store.set('mode', ui.mode); ui.selected.clear(); ui.qadd = null; render();
+});
+$('#toolbar').addEventListener('change', e => {
+  const k = {tfPrio:'prio', tfDue:'due', tfLabel:'label'}[e.target.id];
+  if (k) { ui.tf[k] = e.target.value; renderTasksToolbar(); renderContent(); }
+});
+$('#toolbar').addEventListener('click', e => {
+  if (e.target.closest('[data-tf-clear]')) { ui.tf = {prio:'all', due:'all', label:'all'}; $('#q').value = ''; ui.q = ''; render(); }
+});
+$('#content').addEventListener('click', async e => {
+  if (ui.mode !== 'tasks') return;
+  const qa = e.target.closest('[data-qadd]'); if (qa) { ui.qadd = qa.dataset.qadd; renderContent(); return; }
+  const qs = e.target.closest('[data-qadd-save]'); if (qs) { await quickAdd(qs.dataset.qaddSave); return; }
+  if (e.target.closest('[data-qadd-cancel]')) { ui.qadd = null; renderContent(); return; }
+  const ac = e.target.closest('[data-archive-col]');
+  if (ac) {
+    const ids = filteredTasks().filter(t => colOf(t).id === ac.dataset.archiveCol).map(t => t.id);
+    if (await confirmAsk('Lưu trữ thẻ', `Lưu trữ ${ids.length} thẻ trong cột này? Bạn xem lại hoặc khôi phục được trong “Thẻ đã lưu trữ”.`, 'Lưu trữ'))
+      run(() => inChunks(ids, id => db.collection('tasks').doc(id).update({archived: true, updatedAt: Date.now()})), `Đã lưu trữ ${ids.length} thẻ`);
+    return;
+  }
+  const pr = e.target.closest('tr[data-nav]'); if (pr) { nav(pr.dataset.nav); return; }
+  const card = e.target.closest('[data-tid]'); if (card) openTask(tasks.find(t => t.id === card.dataset.tid));
+});
+$('#content').addEventListener('keydown', e => {
+  if (ui.mode !== 'tasks') return;
+  if (e.target.id === 'qaddText') {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); quickAdd(ui.qadd); }
+    if (e.key === 'Escape') { ui.qadd = null; renderContent(); }
+    return;
+  }
+  if (e.key === 'Enter') {
+    const pr = e.target.closest('tr[data-nav]'); if (pr) { nav(pr.dataset.nav); return; }
+    const card = e.target.closest('[data-tid]'); if (card) openTask(tasks.find(t => t.id === card.dataset.tid));
+  }
+});
+
+// ----- task dialog -----
+let editingTask = null, taskDraft = null;
+function fillTaskProject(pid, t){
+  const p = projById(pid);
+  $('#tk-col').innerHTML = boardCols(p).map(c => `<option value="${esc(c.id)}">${esc(c.name)}</option>`).join('');
+  $('#tk-col').value = t ? colOf(t).id : (ui.qaddDefaultCol || boardCols(p)[0].id);
+  fillGroupSel($('#tk-group'), $('#tk-newgroup-wrap'), pid, t ? t.groupId : (ui.project === pid && ui.group !== 'all' && ui.group !== '_none' ? ui.group : ''));
+  if (!t) { taskDraft.labels = []; taskDraft.linkIds = []; }
+  renderTaskLabels(); renderTaskAtt();
+}
+function openTask(t){
+  if (!t && !canWrite) return;
+  if (!t && !projects.length) { openProj(); return; }
+  editingTask = t || null;
+  const pid = t ? t.projectId : (ui.project !== 'all' ? ui.project : projOrder()[0].id);
+  taskDraft = {projectId: pid, labels: [...(t ? t.labels||[] : [])], linkIds: [...(t ? t.linkIds||[] : [])], checklist: (t ? t.checklist||[] : []).map(c => ({...c}))};
+  $('#taskDlgTitle').textContent = t ? 'Công việc' : 'Thêm công việc';
+  $('#tk-proj-wrap').hidden = !!t;
+  $('#tk-proj').innerHTML = projOptions(pid);
+  $('#tk-projname').textContent = t ? (projById(pid)||{}).name || '' : '';
+  $('#tk-title').value = t ? t.title : '';
+  $('#tk-prio').innerHTML = `<option value="">Chưa đặt</option>` + PRIOS.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+  $('#tk-prio').value = t ? (t.priority||'') : '';
+  $('#tk-start').value = t ? (t.start||'') : '';
+  $('#tk-due').value = t ? (t.due||'') : '';
+  $('#tk-assignee').value = t ? (t.assignee||'') : '';
+  $('#tk-desc').value = t ? (t.desc||'') : '';
+  $('#tk-ck-new').value = '';
+  fillTaskProject(pid, t);
+  renderChecklist();
+  $('#tk-del').hidden = !t || !canWrite; $('#tk-archive').hidden = !t || !canWrite;
+  if (t) $('#tk-archive').textContent = t.archived ? 'Khôi phục' : 'Lưu trữ';
+  $('#tk-meta').textContent = t ? `Tạo ${fmtDate(t.createdAt)} · Cập nhật ${fmtDate(t.updatedAt)}${t.doneAt ? ' · Hoàn thành ' + fmtDate(t.doneAt) : ''}` : '';
+  $('#dlgTask').querySelectorAll('input,select,textarea').forEach(el => { if (el.id !== 'tk-att-pick') el.disabled = !canWrite; });
+  $('#dlgTask').showModal();
+  if (!t) $('#tk-title').focus();
+}
+function renderTaskLabels(){
+  const lbls = boardLabels(projById(taskDraft.projectId));
+  $('#tk-labels').innerHTML = lbls.length
+    ? lbls.map(l => `<button type="button" class="lpick${taskDraft.labels.includes(l.id) ? ' on' : ''}" data-lid="${esc(l.id)}" style="--c:${esc(l.color)}" aria-pressed="${taskDraft.labels.includes(l.id)}">${esc(l.name)}</button>`).join('')
+    : `<span class="hint">Dự án chưa có nhãn. Tạo nhãn trong menu ⋯ → Cài đặt cột và nhãn.</span>`;
+}
+function renderChecklist(){
+  const ck = taskDraft.checklist, d = ck.filter(c => c.done).length;
+  $('#tk-ck-count').textContent = ck.length ? `${d}/${ck.length}` : '';
+  $('#tk-ck-bar').hidden = !ck.length;
+  $('#tk-ck-bar').firstElementChild.style.width = ck.length ? `${Math.round(d / ck.length * 100)}%` : '0';
+  $('#tk-ck').innerHTML = ck.map((c,i) => `<div class="ckrow"><input type="checkbox" id="ck${i}" data-ck="${i}"${c.done ? ' checked' : ''}${canWrite ? '' : ' disabled'}><input type="text" class="ck-text${c.done ? ' done' : ''}" data-cktext="${i}" value="${esc(c.text)}" aria-label="Việc con ${i+1}"${canWrite ? '' : ' disabled'}>${canWrite ? `<button type="button" class="icon-btn" data-ckdel="${i}" aria-label="Xóa việc con">${ICON.del}</button>` : ''}</div>`).join('');
+}
+function renderTaskAtt(){
+  const pid = taskDraft.projectId;
+  const att = taskDraft.linkIds.map(id => links.find(l => l.id === id)).filter(Boolean);
+  $('#tk-att').innerHTML = att.length ? att.map(l => { const t = typeById(l.type), u = normUrl(l.url); return `<div class="attrow"><span class="badge" style="--c:${esc(t.color)}">${esc(t.code)}</span>${u ? `<a href="${esc(u)}" target="_blank" rel="noopener noreferrer">${esc(l.title)}</a>` : `<span>${esc(l.title)}</span>`}${canWrite ? `<button type="button" class="icon-btn" data-attdel="${esc(l.id)}" aria-label="Bỏ đính kèm">${ICON.del}</button>` : ''}</div>`; }).join('') : `<span class="hint">Chưa đính kèm tài liệu nào.</span>`;
+  const avail = links.filter(l => l.projectId === pid && !taskDraft.linkIds.includes(l.id)).sort((a,b) => String(a.title).localeCompare(String(b.title),'vi'));
+  const pick = $('#tk-att-pick');
+  pick.hidden = !canWrite || !avail.length;
+  pick.innerHTML = `<option value="">＋ Đính kèm tài liệu của dự án (${avail.length})…</option>` + groupsOf(pid).concat([{id:'', name:'Chưa phân nhóm'}]).map(g => {
+    const its = avail.filter(l => (linkGroup(l) ? linkGroup(l).id : '') === g.id); if (!its.length) return '';
+    return `<optgroup label="${esc(g.name)}">${its.map(l => `<option value="${esc(l.id)}">${esc(l.title)}</option>`).join('')}</optgroup>`;
+  }).join('');
+}
+$('#tk-proj').addEventListener('change', () => { taskDraft.projectId = $('#tk-proj').value; fillTaskProject(taskDraft.projectId, null); });
+$('#tk-group').addEventListener('change', () => { const w = $('#tk-newgroup-wrap'); w.hidden = $('#tk-group').value !== '__new'; if (!w.hidden) $('#tk-newgroup').focus(); });
+$('#tk-labels').addEventListener('click', e => { const b = e.target.closest('[data-lid]'); if (!b || !canWrite) return; const id = b.dataset.lid; const i = taskDraft.labels.indexOf(id); i >= 0 ? taskDraft.labels.splice(i,1) : taskDraft.labels.push(id); renderTaskLabels(); });
+function addCk(){ const v = $('#tk-ck-new').value.trim(); if (!v) return; taskDraft.checklist.push({id: newId(), text: v, done: false}); $('#tk-ck-new').value = ''; renderChecklist(); $('#tk-ck-new').focus(); }
+$('#tk-ck-new').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); addCk(); } });
+$('#tk-ck-addbtn').addEventListener('click', addCk);
+$('#tk-ck').addEventListener('change', e => { const i = e.target.dataset.ck; if (i != null) { taskDraft.checklist[i].done = e.target.checked; renderChecklist(); } });
+$('#tk-ck').addEventListener('input', e => { const i = e.target.dataset.cktext; if (i != null) taskDraft.checklist[i].text = e.target.value; });
+$('#tk-ck').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.dataset.cktext != null) e.preventDefault(); });
+$('#tk-ck').addEventListener('click', e => { const b = e.target.closest('[data-ckdel]'); if (b) { taskDraft.checklist.splice(+b.dataset.ckdel, 1); renderChecklist(); } });
+$('#tk-att-pick').addEventListener('change', e => { if (e.target.value) { taskDraft.linkIds.push(e.target.value); renderTaskAtt(); } });
+$('#tk-att').addEventListener('click', e => { const b = e.target.closest('[data-attdel]'); if (b) { taskDraft.linkIds = taskDraft.linkIds.filter(id => id !== b.dataset.attdel); renderTaskAtt(); } });
+$('#formTask').addEventListener('submit', async e => {
+  e.preventDefault(); if (!canWrite) return;
+  const title = $('#tk-title').value.trim(); if (!title) { $('#tk-title').focus(); return; }
+  if ($('#tk-group').value === '__new' && !$('#tk-newgroup').value.trim()) { $('#tk-newgroup').focus(); return; }
+  const start = $('#tk-start').value, due = $('#tk-due').value;
+  if (start && due && due < start) { toast('Hạn chót đang sớm hơn ngày bắt đầu. Hãy kiểm tra lại.'); $('#tk-due').focus(); return; }
+  const pid = taskDraft.projectId, colId = $('#tk-col').value, now = Date.now();
+  const col = boardCols(projById(pid)).find(c => c.id === colId);
+  const data = {title, columnId: colId, priority: $('#tk-prio').value, start, due, assignee: $('#tk-assignee').value.trim(), desc: $('#tk-desc').value.trim(),
+    labels: taskDraft.labels, checklist: taskDraft.checklist.filter(c => c.text.trim()), linkIds: taskDraft.linkIds, updatedAt: now};
+  const ok = await run(async () => {
+    data.groupId = await resolveGroup(pid, $('#tk-group').value, $('#tk-newgroup').value);
+    if (editingTask) {
+      const was = isDone(editingTask);
+      if (col && col.done && !was) data.doneAt = now; else if (col && !col.done) data.doneAt = null;
+      if (colOf(editingTask).id !== colId) data.order = nextOrder(pid, colId);
+      await db.collection('tasks').doc(editingTask.id).update(data);
+    } else {
+      await db.collection('tasks').doc().set({...data, projectId: pid, order: nextOrder(pid, colId), archived: false, doneAt: col && col.done ? now : null, createdAt: now});
+    }
+  }, editingTask ? 'Đã lưu công việc' : 'Đã thêm công việc');
+  if (ok) $('#dlgTask').close();
+});
+$('#tk-del').addEventListener('click', async () => {
+  const t = editingTask; if (!t) return;
+  $('#dlgTask').close();
+  if (await confirmAsk('Xóa công việc', `Xóa “${t.title}”? Không thể hoàn tác. Nếu chỉ muốn cất đi, hãy dùng “Lưu trữ”.`)) run(() => db.collection('tasks').doc(t.id).delete(), 'Đã xóa công việc');
+});
+$('#tk-archive').addEventListener('click', async () => {
+  const t = editingTask; if (!t) return;
+  const ok = await run(() => db.collection('tasks').doc(t.id).update({archived: !t.archived, updatedAt: Date.now()}), t.archived ? 'Đã khôi phục thẻ' : 'Đã lưu trữ thẻ');
+  if (ok) $('#dlgTask').close();
+});
+
+// ----- board settings: columns & labels -----
+let boardDraft = null;
+function openBoardSettings(){
+  const p = projById(ui.project); if (!p || !canWrite) return;
+  boardDraft = {pid: p.id, columns: boardCols(p).map(c => ({...c})), labels: boardLabels(p).map(l => ({...l}))};
+  $('#bs-proj').textContent = p.name;
+  renderBoardDraft(); $('#dlgBoard').showModal();
+}
+function renderBoardDraft(){
+  const cnt = {}; tasks.filter(t => t.projectId === boardDraft.pid && !t.archived).forEach(t => { const id = colOf(t).id; cnt[id] = (cnt[id]||0) + 1; });
+  $('#bs-cols').innerHTML = boardDraft.columns.map((c,i) => `<div class="bs-row">
+    <input type="text" data-colname="${i}" id="bsc${i}" value="${esc(c.name)}" maxlength="40" aria-label="Tên cột">
+    <label class="check bs-done"><input type="radio" name="bsdone" data-coldone="${i}"${c.done ? ' checked' : ''}> Cột hoàn thành</label>
+    <span class="count">${cnt[c.id]||0} thẻ</span>
+    <button type="button" class="icon-btn" data-colmove="${i}:-1" aria-label="Lên"${i===0?' disabled':''}>↑</button>
+    <button type="button" class="icon-btn" data-colmove="${i}:1" aria-label="Xuống"${i===boardDraft.columns.length-1?' disabled':''}>↓</button>
+    <button type="button" class="icon-btn" data-coldel="${i}" aria-label="Xóa cột"${boardDraft.columns.length<=1?' disabled':''}>${ICON.del}</button>
+  </div>`).join('');
+  $('#bs-labels').innerHTML = boardDraft.labels.length ? boardDraft.labels.map((l,i) => `<div class="bs-row">
+    <input type="color" data-lblcolor="${i}" id="bsl-c${i}" value="${esc(l.color)}" aria-label="Màu nhãn">
+    <input type="text" data-lblname="${i}" id="bsl-n${i}" value="${esc(l.name)}" maxlength="30" aria-label="Tên nhãn">
+    <button type="button" class="icon-btn" data-lbldel="${i}" aria-label="Xóa nhãn">${ICON.del}</button>
+  </div>`).join('') : `<span class="hint">Chưa có nhãn. Ví dụ: “Chờ khách hàng”, “Lỗi”, “Cần họp”.</span>`;
+}
+$('#dlgBoard').addEventListener('input', e => {
+  const d = e.target.dataset;
+  if (d.colname != null) boardDraft.columns[d.colname].name = e.target.value;
+  if (d.lblname != null) boardDraft.labels[d.lblname].name = e.target.value;
+  if (d.lblcolor != null) boardDraft.labels[d.lblcolor].color = e.target.value;
+});
+$('#dlgBoard').addEventListener('change', e => { const i = e.target.dataset.coldone; if (i != null) boardDraft.columns.forEach((c,j) => c.done = j === +i); });
+$('#dlgBoard').addEventListener('click', async e => {
+  const mv = e.target.closest('[data-colmove]');
+  if (mv) { const [i, dir] = mv.dataset.colmove.split(':').map(Number); const a = boardDraft.columns; [a[i], a[i+dir]] = [a[i+dir], a[i]]; renderBoardDraft(); return; }
+  const cd = e.target.closest('[data-coldel]'); if (cd) { boardDraft.columns.splice(+cd.dataset.coldel, 1); renderBoardDraft(); return; }
+  const ld = e.target.closest('[data-lbldel]'); if (ld) { boardDraft.labels.splice(+ld.dataset.lbldel, 1); renderBoardDraft(); return; }
+  if (e.target.closest('#bs-addcol')) { boardDraft.columns.splice(Math.max(0, boardDraft.columns.length - 1), 0, {id: 'c' + newId(), name: 'Cột mới'}); renderBoardDraft(); return; }
+  if (e.target.closest('#bs-addlbl')) { boardDraft.labels.push({id: 'l' + newId(), name: 'Nhãn mới', color: LABEL_COLORS[boardDraft.labels.length % LABEL_COLORS.length]}); renderBoardDraft(); const n = $('#bsl-n' + (boardDraft.labels.length-1)); if (n) { n.focus(); n.select(); } }
+});
+$('#formBoard').addEventListener('submit', async e => {
+  e.preventDefault();
+  const columns = boardDraft.columns.map(c => ({id: c.id, name: c.name.trim() || 'Không tên', ...(c.done ? {done: true} : {})}));
+  const labels = boardDraft.labels.map(l => ({id: l.id, name: l.name.trim() || 'Nhãn', color: /^#[0-9a-f]{6}$/i.test(l.color) ? l.color : '#5a6b7d'}));
+  const keep = new Set(columns.map(c => c.id)), pid = boardDraft.pid;
+  const orphans = tasks.filter(t => t.projectId === pid && !keep.has(colOf(t).id));
+  const first = columns[0];
+  const ok = await run(async () => {
+    await db.collection('projects').doc(pid).update({columns, labels, updatedAt: Date.now()});
+    await inChunks(orphans, t => db.collection('tasks').doc(t.id).update({columnId: first.id, doneAt: first.done ? Date.now() : null, updatedAt: Date.now()}));
+  }, orphans.length ? `Đã lưu. ${orphans.length} thẻ của cột bị xóa đã chuyển sang “${first.name}”.` : 'Đã lưu cài đặt bảng');
+  if (ok) $('#dlgBoard').close();
+});
+
+// ----- archived cards -----
+function openArchived(){
+  const p = projById(ui.project); if (!p) return;
+  $('#ar-proj').textContent = p.name; renderArchived(); $('#dlgArchive').showModal();
+}
+function renderArchived(){
+  const list = tasks.filter(t => t.archived && t.projectId === ui.project).sort((a,b) => (b.updatedAt||0) - (a.updatedAt||0));
+  $('#ar-list').innerHTML = list.length ? `<div class="flat-list">${list.map(t => `<div class="trow" data-arid="${esc(t.id)}"><div class="trow-main"><div class="trow-title">${esc(t.title)}</div><div class="lmeta"><span class="tag">${esc(colOf(t).name)}</span><span class="date">Lưu trữ ${fmtDate(t.updatedAt)}</span></div></div>
+    ${canWrite ? `<button type="button" class="btn" data-arrestore="${esc(t.id)}">Khôi phục</button><button type="button" class="icon-btn" data-ardel="${esc(t.id)}" aria-label="Xóa hẳn">${ICON.del}</button>` : ''}</div>`).join('')}</div>` : `<p class="hint">Chưa có thẻ nào được lưu trữ.</p>`;
+}
+$('#ar-list').addEventListener('click', async e => {
+  const r = e.target.closest('[data-arrestore]');
+  if (r) { await run(() => db.collection('tasks').doc(r.dataset.arrestore).update({archived: false, updatedAt: Date.now()}), 'Đã khôi phục thẻ'); renderArchived(); return; }
+  const d = e.target.closest('[data-ardel]');
+  if (d) { const t = tasks.find(x => x.id === d.dataset.ardel); $('#dlgArchive').close(); if (t && await confirmAsk('Xóa công việc', `Xóa hẳn “${t.title}”? Không thể hoàn tác.`)) run(() => db.collection('tasks').doc(t.id).delete(), 'Đã xóa công việc'); }
+});
+
 // ---------- local storage database ----------
 const LocalDB = (() => {
   const KEY = 'kld:data:v1';
@@ -1081,7 +1698,7 @@ const LocalDB = (() => {
     exportAll(){ return clone(data); },
     importAll(obj){
       let n = 0;
-      for (const col of ['projects','groups','links','config']) {
+      for (const col of ['projects','groups','links','tasks','config']) {
         const src = obj && obj[col]; if (!src || typeof src !== 'object') continue;
         data[col] = data[col] || {};
         for (const [id, v] of Object.entries(src)) { if (v && typeof v === 'object') { data[col][id] = clone(v); n++; } }
@@ -1110,10 +1727,10 @@ $('#importFile').addEventListener('change', async e => {
   try {
     const obj = JSON.parse(await f.text());
     if (!obj || (!obj.projects && !obj.links)) throw new Error('format');
-    const np = Object.keys(obj.projects||{}).length, nl = Object.keys(obj.links||{}).length;
-    if (!await confirmAsk('Nhập dữ liệu', `File có ${np} dự án và ${nl} tài liệu. Dữ liệu sẽ được gộp vào dữ liệu hiện có (mục trùng mã sẽ được ghi đè). Tiếp tục?`, 'Nhập')) return;
+    const np = Object.keys(obj.projects||{}).length, nl = Object.keys(obj.links||{}).length, nt = Object.keys(obj.tasks||{}).length;
+    if (!await confirmAsk('Nhập dữ liệu', `File có ${np} dự án, ${nl} tài liệu và ${nt} công việc. Dữ liệu sẽ được gộp vào dữ liệu hiện có (mục trùng mã sẽ được ghi đè). Tiếp tục?`, 'Nhập')) return;
     LocalDB.importAll(obj);
-    toast(`Đã nhập ${np} dự án, ${nl} tài liệu`);
+    toast(`Đã nhập ${np} dự án, ${nl} tài liệu, ${nt} công việc`);
   } catch { toast('File không đúng định dạng. Hãy chọn file .json được xuất từ app này.'); }
 });
 
@@ -1148,6 +1765,7 @@ async function boot(){
   const onErr = e => { console.error(e); if (e && e.code === 'revoked') { canWrite = false; } toast('Có lỗi khi đọc dữ liệu. Hãy tải lại trang.'); };
   db.collection('projects').onSnapshot(s => { projects = s.docs.map(d => ({id:d.id, ...d.data()})); loaded.p = true; if (loaded.l) clearTimeout(timer); render(); }, onErr);
   db.collection('links').onSnapshot(s => { links = s.docs.map(d => ({id:d.id, ...d.data()})); loaded.l = true; if (loaded.p) clearTimeout(timer); render(); }, onErr);
+  db.collection('tasks').onSnapshot(s => { tasks = s.docs.map(d => ({id:d.id, ...d.data()})); loaded.t = true; render(); }, onErr);
   db.collection('groups').onSnapshot(s => { groups = s.docs.map(d => ({id:d.id, ...d.data()})); loaded.g = true; render(); }, onErr);
   db.doc('config/types').onSnapshot(s => {
     const list = s.exists && Array.isArray(s.data().list) && s.data().list.length ? s.data().list : DEFAULT_TYPES;
