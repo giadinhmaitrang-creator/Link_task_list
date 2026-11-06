@@ -1117,10 +1117,34 @@ $('#importFile').addEventListener('change', async e => {
   } catch { toast('File không đúng định dạng. Hãy chọn file .json được xuất từ app này.'); }
 });
 
+// ---------- import from a private link (#import=...) ----------
+// The data travels in the URL fragment, which browsers never send to the server.
+async function importFromHash(){
+  const m = location.hash.match(/^#import=([A-Za-z0-9_-]+)$/);
+  if (!m) return;
+  history.replaceState(null, '', location.pathname + location.search);
+  try {
+    const b64 = m[1].replace(/-/g,'+').replace(/_/g,'/');
+    const bin = atob(b64 + '='.repeat((4 - b64.length % 4) % 4));
+    const bytes = Uint8Array.from(bin, c => c.charCodeAt(0));
+    const text = await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).text();
+    const obj = JSON.parse(text);
+    if (!obj || (!obj.projects && !obj.links)) throw new Error('format');
+    LocalDB.importAll(obj);
+    const firstProj = Object.keys(obj.projects||{})[0];
+    if (firstProj) { ui.project = firstProj; ui.open.add(firstProj); store.set('project', firstProj); }
+    setTimeout(() => toast(`Đã nạp ${Object.keys(obj.projects||{}).length} dự án, ${Object.keys(obj.groups||{}).length} nhóm, ${Object.keys(obj.links||{}).length} tài liệu`), 300);
+  } catch (e) {
+    console.error(e);
+    setTimeout(() => toast('Link nạp dữ liệu bị lỗi hoặc bị cắt mất một phần. Hãy dùng Dữ liệu → Nhập dữ liệu từ file.'), 300);
+  }
+}
+
 // ---------- boot ----------
 async function boot(){
   const timer = setTimeout(() => { if (!loaded.p || !loaded.l) { db = null; render(); } }, 10000);
   db = LocalDB;
+  await importFromHash();
   const onErr = e => { console.error(e); if (e && e.code === 'revoked') { canWrite = false; } toast('Có lỗi khi đọc dữ liệu. Hãy tải lại trang.'); };
   db.collection('projects').onSnapshot(s => { projects = s.docs.map(d => ({id:d.id, ...d.data()})); loaded.p = true; if (loaded.l) clearTimeout(timer); render(); }, onErr);
   db.collection('links').onSnapshot(s => { links = s.docs.map(d => ({id:d.id, ...d.data()})); loaded.l = true; if (loaded.p) clearTimeout(timer); render(); }, onErr);
