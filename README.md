@@ -27,5 +27,6 @@ Hãy dùng nút **Dữ liệu → Xuất dữ liệu (.json)** để sao lưu đ
 
 Toàn bộ app nằm trong một file `index.html`, không cần build.
 
-- Online: bật GitHub Pages cho kho này (Settings → Pages → Deploy from a branch → `main` / root).
+- Online: https://giadinhmaitrang-creator.github.io/Link_task_list/ (GitHub Pages, chạy từ nhánh `gh-pages`).
+- Cập nhật web: sửa `index.html` trên `main`, rồi đưa cùng nội dung sang nhánh `gh-pages`: `git push origin main:gh-pages`.
 - Trên máy: mở trực tiếp `index.html` bằng trình duyệt.
