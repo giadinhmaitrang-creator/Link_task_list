@@ -11,12 +11,12 @@ Web app lưu trữ và quản lý link website, tài liệu theo **dự án** v�
 - Thêm nhiều link một lần (mỗi dòng một link, hoặc `Tiêu đề | URL`).
 - Ghim, tag, ghi chú, cảnh báo link trùng.
 - Chọn nhiều tài liệu để đổi loại, chuyển nhóm, chuyển dự án hoặc xóa.
-- **Quản lý công việc dạng Kanban** (như Trello) cho từng dự án:
+- **Quản lý công việc dạng Kanban** (như Trello), với danh mục **Bảng** riêng, độc lập với dự án tài liệu:
   - cột trạng thái tùy chỉnh (mặc định: Cần làm, Đang làm, Chờ duyệt, Hoàn thành), kéo-thả thẻ giữa các cột;
   - thẻ có ưu tiên, ngày bắt đầu, hạn chót (báo quá hạn / sắp đến hạn), nhãn màu, checklist, mô tả, người phụ trách;
-  - đính kèm tài liệu của dự án vào thẻ;
-  - lọc theo nhóm, ưu tiên, hạn, nhãn; lưu trữ và khôi phục thẻ;
-  - trang “Việc cần chú ý” gom việc quá hạn và sắp đến hạn của mọi dự án.
+  - đính kèm tài liệu từ bất kỳ dự án nào vào thẻ;
+  - lọc theo ưu tiên, hạn, nhãn; lưu trữ và khôi phục thẻ;
+  - trang “Việc cần chú ý” gom việc quá hạn và sắp đến hạn của mọi bảng.
 - Giao diện sáng/tối, dùng được trên điện thoại.
 
 ## Lưu trữ dữ liệu
