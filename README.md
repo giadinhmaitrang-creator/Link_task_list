@@ -17,6 +17,11 @@ Web app lưu trữ và quản lý link website, tài liệu theo **dự án** v�
   - đính kèm tài liệu từ bất kỳ dự án nào vào thẻ;
   - lọc theo ưu tiên, hạn, nhãn; lưu trữ và khôi phục thẻ;
   - trang “Việc cần chú ý” gom việc quá hạn và sắp đến hạn của mọi bảng.
+- **Lịch (chỉ xem)**: lấy lịch về để xem cùng công việc, không ghi ngược lại.
+  - Google Calendar cá nhân: đăng nhập Google với quyền chỉ đọc (`calendar.readonly`), tự cập nhật. Cần tạo Client ID trên Google Cloud (hướng dẫn trong *Lịch → Cài đặt lịch*), origin: `https://giadinhmaitrang-creator.github.io`.
+  - Outlook công ty: nhập file `.ics` xuất từ Outlook (hỗ trợ lịch lặp, ngoại lệ, múi giờ).
+  - Lịch theo ngày, khối “Lịch hôm nay” trong *Việc cần chú ý*, số cuộc họp trên thẻ có hạn chót.
+  - Lịch chỉ lưu trong trình duyệt, không nằm trong file xuất dữ liệu.
 - Giao diện sáng/tối, dùng được trên điện thoại.
 
 ## Lưu trữ dữ liệu

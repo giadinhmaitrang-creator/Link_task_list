@@ -403,6 +403,43 @@ dialog::backdrop{background:rgba(10,20,16,.45)}
   .type-row .pat{grid-column:1 / -1}
 }
 
+/* ---------- calendar ---------- */
+.ev{display:grid;grid-template-columns:62px minmax(0,1fr) auto;gap:10px 12px;align-items:center;padding:10px 14px;border-top:1px solid var(--line);box-shadow:inset 3px 0 0 var(--c)}
+.ev:first-child{border-top:0}
+.ev.past{opacity:.55}
+.ev.live{background:color-mix(in srgb,var(--c) 8%,var(--surface))}
+.ev-time{display:flex;flex-direction:column;font-family:var(--f-mono);font-size:12.5px;font-variant-numeric:tabular-nums;line-height:1.3}
+.ev-t{font-weight:600;color:var(--fg)}
+.ev-t2{color:var(--muted)}
+.ev-title{font-weight:600;overflow-wrap:anywhere}
+.ev-now{display:inline-block;font-size:11px;font-weight:600;color:var(--accent);background:var(--accent-soft);padding:0 6px;border-radius:5px;vertical-align:1px}
+.ev-src{display:inline-flex;align-items:center;gap:5px}
+.ev-join{padding:6px 12px;font-size:13px;color:var(--accent);border-color:color-mix(in srgb,var(--accent) 40%,var(--line));text-decoration:none}
+.ev-none{padding:12px 14px;color:var(--muted);font-size:13px}
+.due-sub{padding:8px 14px 4px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;border-top:1px solid var(--line);background:var(--surface-2)}
+.sec-title.today{color:var(--accent)}
+.src-row{display:flex;align-items:center;gap:9px;padding:7px 8px;border-radius:8px;cursor:pointer}
+.src-row:hover{background:var(--surface-2)}
+.src-row.sub{padding-left:30px;font-size:13px;color:var(--muted)}
+.src-row input{width:16px;height:16px;accent-color:var(--accent);flex:none}
+.tmeet{color:var(--muted)}
+.due-cal{color:var(--accent)!important}
+.sm-check{font-size:13px;white-space:nowrap;gap:6px}
+.sm-check input{accent-color:var(--accent)}
+.cal-box{display:flex;flex-direction:column;gap:10px;padding:14px;border:1px solid var(--line);border-radius:12px}
+.cal-h{margin:0;font-size:14px;display:flex;align-items:center;gap:8px}
+.cal-status{margin:0;font-size:13px;color:var(--muted);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.ok-dot{width:8px;height:8px;border-radius:50%;background:#2f8f5b;flex:none}
+.row-btns{display:flex;gap:8px;flex-wrap:wrap}
+.guide summary{cursor:pointer;color:var(--accent);font-size:13px;font-weight:500}
+.guide ol{margin:8px 0 0;padding-left:20px;font-size:13px;line-height:1.6;display:flex;flex-direction:column;gap:6px}
+.guide a{color:var(--accent)}
+.cal-empty p{max-width:52ch}
+@media (max-width:640px){
+  .ev{grid-template-columns:52px minmax(0,1fr);padding:10px 12px}
+  .ev .ev-join,.ev .icon-btn{grid-column:2;justify-self:start}
+}
+
 /* ---------- phone layout ---------- */
 .bottomnav,.fab-wrap{display:none}
 @media (max-width:640px){
@@ -493,6 +530,7 @@ dialog::backdrop{background:rgba(10,20,16,.45)}
         <button type="button" id="btnImport">Nhập dữ liệu từ file…</button>
       </div>
       <input type="file" id="importFile" accept=".json,application/json" hidden>
+      <input type="file" id="icsFile" accept=".ics,text/calendar" hidden>
     </div>
     <button class="btn" id="btnTypes" type="button" aria-label="Loại link">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h10M4 12h16M4 17h7"/></svg><span class="lbl">Loại link</span>
@@ -600,7 +638,7 @@ dialog::backdrop{background:rgba(10,20,16,.45)}
     </div>
     <div class="row2">
       <div class="field"><label for="tk-start">Ngày bắt đầu</label><input type="date" id="tk-start"></div>
-      <div class="field"><label for="tk-due">Hạn chót</label><input type="date" id="tk-due"></div>
+      <div class="field"><label for="tk-due">Hạn chót</label><input type="date" id="tk-due"><span class="hint due-cal" id="tk-due-cal" hidden></span></div>
     </div>
     <div class="field"><label>Nhãn</label><div class="label-pick" id="tk-labels"></div></div>
     <div class="field"><label for="tk-desc">Mô tả</label><textarea id="tk-desc" rows="4" maxlength="5000" placeholder="Chi tiết, yêu cầu, ghi chú…"></textarea></div>
@@ -638,6 +676,42 @@ dialog::backdrop{background:rgba(10,20,16,.45)}
   <div class="dlg-foot"><button class="btn" type="button" data-close>Đóng</button></div>
 </div></dialog>
 
+<!-- Calendar settings dialog -->
+<dialog id="dlgCal" class="wide"><div class="dlg">
+  <div class="dlg-head"><h3>Cài đặt lịch</h3><span class="dlg-sub">Chỉ xem, không ghi ngược lại Gmail/Outlook</span></div>
+  <div class="dlg-body">
+    <section class="cal-box">
+      <h4 class="cal-h"><span class="proj-dot" style="--c:#3b6fd6"></span>Google Calendar (Gmail cá nhân)</h4>
+      <p class="cal-status" id="cal-g-status"></p>
+      <div class="field"><label for="cal-cid">Google Client ID</label><input type="text" id="cal-cid" class="mono" autocomplete="off" spellcheck="false" placeholder="123456789-xxxx.apps.googleusercontent.com"><span class="hint">Lấy từ Google Cloud theo hướng dẫn bên dưới. Mã này không phải mật khẩu.</span></div>
+      <div class="row-btns"><button type="button" class="btn primary" id="cal-g-connect">Kết nối Google Calendar</button><button type="button" class="btn danger" id="cal-g-disconnect">Ngắt kết nối</button></div>
+      <details class="guide"><summary>Hướng dẫn lấy Google Client ID (làm một lần, khoảng 15 phút)</summary>
+        <ol>
+          <li>Mở <a href="https://console.cloud.google.com/projectcreate" target="_blank" rel="noopener noreferrer">console.cloud.google.com</a>, đăng nhập bằng Gmail của bạn, tạo dự án mới (tên tùy ý, ví dụ “Kho Link”).</li>
+          <li>Vào <a href="https://console.cloud.google.com/apis/library/calendar-json.googleapis.com" target="_blank" rel="noopener noreferrer">Google Calendar API</a> → bấm <strong>Enable</strong> (Bật).</li>
+          <li>Vào <a href="https://console.cloud.google.com/auth/overview" target="_blank" rel="noopener noreferrer">Google Auth Platform</a> (màn hình xin quyền OAuth) → <strong>Get started</strong>: điền tên ứng dụng và email hỗ trợ; ở <strong>Audience</strong> chọn <strong>External</strong>. Sau đó ở mục <strong>Audience → Test users</strong>, thêm Gmail của bạn.</li>
+          <li>Vào <a href="https://console.cloud.google.com/auth/clients" target="_blank" rel="noopener noreferrer">Clients</a> → <strong>Create client</strong> → loại <strong>Web application</strong>. Ở <strong>Authorized JavaScript origins</strong> thêm đúng địa chỉ: <span class="mono" id="cal-origin"></span> → <strong>Create</strong>.</li>
+          <li>Sao chép <strong>Client ID</strong> (dạng …apps.googleusercontent.com), dán vào ô trên, bấm <strong>Kết nối Google Calendar</strong>. Khi Google báo “ứng dụng chưa được xác minh”, bấm <strong>Tiếp tục</strong> (đây là ứng dụng của chính bạn), rồi cho phép <strong>xem lịch</strong>.</li>
+        </ol>
+      </details>
+    </section>
+    <section class="cal-box">
+      <h4 class="cal-h"><span class="proj-dot" style="--c:#c8662b"></span>Outlook công ty (file .ics)</h4>
+      <p class="cal-status" id="cal-o-status"></p>
+      <div class="row-btns"><button type="button" class="btn primary" id="cal-o-import">Chọn file .ics…</button><button type="button" class="btn danger" id="cal-o-clear">Xóa lịch Outlook</button></div>
+      <details class="guide"><summary>Cách xuất file .ics từ Outlook</summary>
+        <ol>
+          <li><strong>Outlook trên máy tính Windows:</strong> mở <strong>Lịch</strong> → <strong>File → Save Calendar</strong> (Lưu lịch) → <strong>More Options</strong>: Date Range chọn khoảng ngày (ví dụ 3 tháng tới), Detail chọn <strong>Full details</strong> → OK → Lưu file .ics.</li>
+          <li><strong>Outlook trên web / New Outlook</strong> không có nút xuất trực tiếp. Có thể dùng <strong>Cài đặt → Lịch → Lịch được chia sẻ → Xuất bản lịch</strong> để lấy link .ics rồi mở link đó để tải file, nếu IT cho phép.</li>
+          <li>Quay lại đây, bấm <strong>Chọn file .ics…</strong>. Mỗi lần lịch thay đổi, xuất và nhập lại; lịch Outlook cũ trong web sẽ được thay bằng file mới.</li>
+        </ol>
+      </details>
+    </section>
+    <p class="hint">Lịch chỉ được lưu trong trình duyệt này, <strong>không</strong> nằm trong file “Xuất dữ liệu” và không đưa lên GitHub. Lịch công ty có thể chứa thông tin nội bộ, hãy tuân thủ quy định bảo mật của công ty.</p>
+  </div>
+  <div class="dlg-foot"><button class="btn" type="button" data-close>Đóng</button></div>
+</div></dialog>
+
 <!-- Confirm dialog -->
 <dialog id="dlgConfirm"><form class="dlg" method="dialog">
   <div class="dlg-head"><h3 id="cfTitle">Xác nhận</h3></div>
@@ -669,6 +743,10 @@ const DEFAULT_TYPES = [
   {id:'web',   name:'Website',           code:'WEB', color:'#5a6b7d', patterns:[]},
 ];
 const ICON = {
+  ext:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>',
+  gear:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>',
+  refresh:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5"/></svg>',
+  users:'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M21.5 20a6.5 6.5 0 0 0-4-6"/></svg>',
   copy:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></svg>',
   pin:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 17v5M9 3h6l-1 6 4 4H6l4-4z"/></svg>',
   edit:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg>',
@@ -706,7 +784,7 @@ let types = DEFAULT_TYPES;
 const ui = {
   project: store.get('project','all'),
   q: '', type: 'all', group: 'all',
-  mode: store.get('mode','docs') === 'tasks' ? 'tasks' : 'docs',
+  mode: ['docs','tasks','cal'].includes(store.get('mode','docs')) ? store.get('mode','docs') : 'docs',
   tf: {prio:'all', due:'all', label:'all'},
   qadd: null,
   board: store.get('board','all'),
@@ -820,12 +898,14 @@ function render(){
   document.querySelectorAll('.write-only').forEach(el => el.hidden = !canWrite);
   if (ui.project !== 'all' && loaded.p && !projById(ui.project)) ui.project = 'all';
   if (ui.group !== 'all' && ui.group !== '_none' && loaded.g && !groupById(ui.group)) ui.group = 'all';
+  calIdx = null;
   renderSidebar(); renderModeBar(); renderHead(); renderTabs(); renderToolbar(); renderContent(); renderBulk();
 }
-const renderHead = () => ui.mode === 'tasks' ? renderTasksHead() : renderDocsHead();
-const renderToolbar = () => ui.mode === 'tasks' ? renderTasksToolbar() : renderDocsToolbar();
-const renderContent = () => ui.mode === 'tasks' ? renderTasksContent() : renderDocsContent();
+const renderHead = () => ui.mode === 'cal' ? renderCalHead() : ui.mode === 'tasks' ? renderTasksHead() : renderDocsHead();
+const renderToolbar = () => ui.mode === 'cal' ? renderCalToolbar() : ui.mode === 'tasks' ? renderTasksToolbar() : renderDocsToolbar();
+const renderContent = () => ui.mode === 'cal' ? renderCalContent() : ui.mode === 'tasks' ? renderTasksContent() : renderDocsContent();
 function catPath(){
+  if (ui.mode === 'cal') return ['Lịch', `Lịch ${cal.range} ngày tới`];
   if (ui.mode === 'tasks') { const b = ui.board === 'all' ? null : boards.find(x => x.id === ui.board); return ['Bảng công việc', b ? b.name : 'Việc cần chú ý']; }
   const p = ui.project === 'all' ? null : projById(ui.project);
   if (!p) return ['Danh mục dự án', 'Tất cả tài liệu'];
@@ -834,9 +914,9 @@ function catPath(){
 }
 const renderSidebar = () => {
   const [k, t] = catPath(); const a = $('#catSumKind'), b = $('#catSumText'); if (a) a.textContent = k; if (b) b.textContent = t;
-  return ui.mode === 'tasks' ? renderTasksSidebar() : renderDocsSidebar();
+  return ui.mode === 'cal' ? renderCalSidebar() : ui.mode === 'tasks' ? renderTasksSidebar() : renderDocsSidebar();
 };
-const renderTabs = () => ui.mode === 'tasks' ? renderBoardTabs() : renderDocsTabs();
+const renderTabs = () => ui.mode === 'cal' ? ($('#tabs').innerHTML = '') : ui.mode === 'tasks' ? renderBoardTabs() : renderDocsTabs();
 const projOrder = () => projects.slice().sort((a,b) => String(a.name).localeCompare(String(b.name),'vi'));
 function filtered(){
   let list = scopeLinks().filter(matchQ);
@@ -1006,7 +1086,7 @@ function renderBulk(){
   const b = $('#bulkBar');
   document.body.classList.toggle('has-sel', ui.selected.size > 0);
   [...ui.selected].forEach(id => { if (!links.some(l => l.id === id)) ui.selected.delete(id); });
-  if (!canWrite || !ui.selected.size || ui.mode === 'tasks') { b.hidden = true; b.innerHTML = ''; return; }
+  if (!canWrite || !ui.selected.size || ui.mode !== 'docs') { b.hidden = true; b.innerHTML = ''; return; }
   b.hidden = false;
   b.className = 'bulkbar';
   b.innerHTML = `<strong>Đã chọn ${ui.selected.size} link</strong>
@@ -1061,6 +1141,9 @@ document.addEventListener('click', e => {
   else if (act === 'boardSettings') openBoardSettings(false);
   else if (act === 'newBoard') openBoardSettings(true);
   else if (act === 'delBoard') delBoard();
+  else if (act === 'calSettings') openCalSettings();
+  else if (act === 'calRefresh') syncGoogle();
+  else if (act === 'calImport') pickIcs();
   else if (act === 'archived') openArchived();
 });
 $('#btnNewProj').addEventListener('click', () => ui.mode === 'tasks' ? openBoardSettings(true) : openProj());
@@ -1422,12 +1505,14 @@ function renderModeBar(){
   const el = $('#modeBar'), bn = $('#bottomNav');
   $('#fabWrap').hidden = !db || !loaded.p || !canWrite;
   if (!db || !loaded.p) { el.innerHTML = ''; bn.innerHTML = ''; return; }
-  const nd = links.length, nt = liveTasks().filter(isOpen).length;
+  const nd = links.length, nt = liveTasks().filter(isOpen).length, nc = eventsOn(dayKey(Date.now())).length;
   bn.innerHTML = `<button type="button" data-mode="docs" class="${ui.mode==='docs'?'on':''}" aria-current="${ui.mode==='docs'}">${ICON.doc}<span>Tài liệu</span><span class="bn-count">${nd}</span></button>
-    <button type="button" data-mode="tasks" class="${ui.mode==='tasks'?'on':''}" aria-current="${ui.mode==='tasks'}">${ICON.board}<span>Công việc</span><span class="bn-count">${nt}</span></button>`;
+    <button type="button" data-mode="tasks" class="${ui.mode==='tasks'?'on':''}" aria-current="${ui.mode==='tasks'}">${ICON.board}<span>Công việc</span><span class="bn-count">${nt}</span></button>
+    <button type="button" data-mode="cal" class="${ui.mode==='cal'?'on':''}" aria-current="${ui.mode==='cal'}">${ICON.cal}<span>Lịch</span>${nc ? `<span class="bn-count">${nc}</span>` : ''}</button>`;
   el.innerHTML = `<div class="modebar" role="tablist" aria-label="Chế độ xem">
     <button type="button" role="tab" data-mode="docs" class="${ui.mode==='docs'?'on':''}" aria-selected="${ui.mode==='docs'}">${ICON.doc}Tài liệu<span class="count">${nd}</span></button>
     <button type="button" role="tab" data-mode="tasks" class="${ui.mode==='tasks'?'on':''}" aria-selected="${ui.mode==='tasks'}">${ICON.board}Công việc<span class="count">${nt}</span></button>
+    <button type="button" role="tab" data-mode="cal" class="${ui.mode==='cal'?'on':''}" aria-selected="${ui.mode==='cal'}">${ICON.cal}Lịch${nc ? `<span class="count">${nc}</span>` : ''}</button>
   </div>`;
 }
 function renderBoardTabs(){
@@ -1483,6 +1568,7 @@ function taskCard(t){
     <div class="tmeta">
       ${pr ? `<span class="tprio" style="--c:${pr.color}">${esc(pr.name)}</span>` : ''}
       ${t.due ? `<span class="tdue ${ds}" title="Hạn chót">${ICON.cal}${fmtDay(t.due)}</span>` : ''}
+      ${dueCalChip(t)}
       ${ck.length ? `<span class="tck${ckDone === ck.length ? ' ok' : ''}" title="Checklist">${ICON.check}${ckDone}/${ck.length}</span>` : ''}
       ${att ? `<span class="tatt" title="Tài liệu đính kèm">${ICON.clip}${att}</span>` : ''}
       ${t.desc ? `<span class="tdesc" title="Có mô tả">${ICON.lines}</span>` : ''}
@@ -1577,6 +1663,7 @@ function renderAttention(c){
   }).join('');
   const nothing = !over.length && !today.length && !week.length;
   c.innerHTML = `<div class="feed">
+    ${calTodayBlock()}
     ${nothing ? `<div class="empty"><h3>Không có việc nào quá hạn hoặc sắp đến hạn</h3><p>Các việc có hạn chót trong 7 ngày tới sẽ hiện ở đây.</p></div>` : ''}
     ${sec('Quá hạn', over, 'over-txt')}${sec('Hạn hôm nay', today)}${sec('Hạn trong 7 ngày tới', week)}
     <section class="feed-sec"><h2 class="sec-title">Theo bảng</h2><div class="ptable-wrap"><table class="ptable"><thead><tr><th>Bảng</th><th class="num">Đang mở</th><th class="num">Quá hạn</th><th class="num">Đã xong</th></tr></thead><tbody>${rows}</tbody></table></div></section>
@@ -1590,8 +1677,11 @@ function renderTasksContent(){
 }
 
 // ----- task events -----
-const fabRun = a => ({add: () => openLink(), bulk: () => openBulk(), newProj: () => openProj(), addTask: () => openTask(), newBoard: () => openBoardSettings(true)}[a] || (() => {}))();
+const fabRun = a => ({add: () => openLink(), bulk: () => openBulk(), newProj: () => openProj(), addTask: () => openTask(), newBoard: () => openBoardSettings(true), calRefresh: () => syncGoogle(), calImport: () => pickIcs(), calSettings: () => openCalSettings()}[a] || (() => {}))();
 function fabItems(){
+  if (ui.mode === 'cal') return gConnected()
+    ? [['calRefresh','Làm mới lịch Google'],['calImport','Nhập lịch Outlook (.ics)'],['calSettings','Cài đặt lịch']]
+    : [['calSettings','Cài đặt lịch'],['calImport','Nhập lịch Outlook (.ics)']];
   if (ui.mode === 'tasks') return boards.length
     ? [['addTask','Thêm công việc'],['newBoard','Tạo bảng mới']]
     : [['newBoard','Tạo bảng đầu tiên']];
@@ -1605,6 +1695,7 @@ $('#fab').addEventListener('click', e => {
   if (!m.hidden) { m.hidden = true; $('#fab').setAttribute('aria-expanded','false'); return; }
   const items = fabItems();
   if (items.length === 1 || (ui.mode === 'tasks' && ui.board !== 'all')) { fabRun(items[0][0]); return; }
+  if (ui.mode === 'cal' && !calConfigured()) { fabRun('calSettings'); return; }
   m.innerHTML = items.map(([a,l]) => `<button type="button" data-act="${a}">${l}</button>`).join('');
   m.hidden = false; $('#fab').setAttribute('aria-expanded','true');
 });
@@ -1677,6 +1768,7 @@ function openTask(t){
   $('#tk-prio').value = t ? (t.priority||'') : '';
   $('#tk-start').value = t ? (t.start||'') : '';
   $('#tk-due').value = t ? (t.due||'') : '';
+  dueCalHint();
   $('#tk-assignee').value = t ? (t.assignee||'') : '';
   $('#tk-desc').value = t ? (t.desc||'') : '';
   $('#tk-ck-new').value = '';
@@ -1854,6 +1946,474 @@ $('#ar-list').addEventListener('click', async e => {
   if (d) { const t = tasks.find(x => x.id === d.dataset.ardel); $('#dlgArchive').close(); if (t && await confirmAsk('Xóa công việc', `Xóa hẳn “${t.title}”? Không thể hoàn tác.`)) run(() => db.collection('tasks').doc(t.id).delete(), 'Đã xóa công việc'); }
 });
 
+// ----- .ics (Outlook export) parser with basic recurrence expansion -----
+const WIN_TZ = {'SE Asia Standard Time':420,'Asia/Ho_Chi_Minh':420,'Asia/Saigon':420,'Asia/Bangkok':420,'Asia/Jakarta':420,
+  'China Standard Time':480,'Singapore Standard Time':480,'Asia/Singapore':480,'Taipei Standard Time':480,'Tokyo Standard Time':540,'Korea Standard Time':540,
+  'UTC':0,'Etc/UTC':0,'Coordinated Universal Time':0,'GMT Standard Time':0};
+const icsUnescape = v => String(v||'').replace(/\\n/gi,'\n').replace(/\\,/g,',').replace(/\\;/g,';').replace(/\\\\/g,'\\');
+const MEET_RE = /(https:\/\/(?:teams\.microsoft\.com\/l\/meetup-join|teams\.live\.com\/meet|[\w.-]*zoom\.us\/(?:j|my)|meet\.google\.com|[\w.-]*webex\.com\/[\w.-]+\/j\.php)[^\s"<>\\]*)/i;
+function icsParse(text){
+  const lines = String(text).replace(/\r\n[ \t]/g,'').replace(/\n[ \t]/g,'').split(/\r?\n/);
+  const tzOff = {}, vevents = [];
+  let cur = null, tz = null, sub = '';
+  for (const raw of lines) {
+    if (!raw) continue;
+    const i = raw.indexOf(':'); if (i < 0) continue;
+    const left = raw.slice(0, i), value = raw.slice(i + 1);
+    const parts = left.split(';'), N = parts[0].toUpperCase(), params = {};
+    parts.slice(1).forEach(p => { const j = p.indexOf('='); if (j > 0) params[p.slice(0,j).toUpperCase()] = p.slice(j+1).replace(/^"|"$/g,''); });
+    if (N === 'BEGIN') {
+      const v = value.trim().toUpperCase();
+      if (v === 'VEVENT') cur = {};
+      else if (v === 'VTIMEZONE') tz = {id:'', std:null, dl:null};
+      else if (v === 'STANDARD' || v === 'DAYLIGHT') sub = v;
+      continue;
+    }
+    if (N === 'END') {
+      const v = value.trim().toUpperCase();
+      if (v === 'VEVENT' && cur) { vevents.push(cur); cur = null; }
+      else if (v === 'VTIMEZONE' && tz) { if (tz.id) tzOff[tz.id] = tz.std != null ? tz.std : tz.dl; tz = null; }
+      else if (v === 'STANDARD' || v === 'DAYLIGHT') sub = '';
+      continue;
+    }
+    if (tz) {
+      if (N === 'TZID') tz.id = value.trim();
+      if (N === 'TZOFFSETTO' && sub) { const m = value.match(/([+-])(\d\d)(\d\d)/); if (m) { const o = (m[1] === '-' ? -1 : 1) * (+m[2] * 60 + +m[3]); if (sub === 'STANDARD') tz.std = o; else tz.dl = o; } }
+      continue;
+    }
+    if (cur) {
+      if (N === 'EXDATE') { (cur.EXDATE = cur.EXDATE || []).push(...value.split(',').map(v => ({value: v, params}))); }
+      else if (!(N in cur)) cur[N] = {value, params};
+    }
+  }
+  return {vevents, tzOff};
+}
+function icsTime(prop, tzOff){
+  if (!prop) return null;
+  const m = String(prop.value).trim().match(/^(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2})(\d{2})?(Z)?)?$/);
+  if (!m) return null;
+  const [, Y, Mo, D, h, mi, s, z] = m;
+  if (h == null) return {ms: new Date(+Y, +Mo - 1, +D).getTime(), allDay: true};
+  if (z) return {ms: Date.UTC(+Y, +Mo - 1, +D, +h, +mi, +(s || 0)), allDay: false};
+  const id = prop.params && prop.params.TZID;
+  const off = id ? (tzOff[id] != null ? tzOff[id] : WIN_TZ[id] != null ? WIN_TZ[id] : null) : null;
+  if (off == null) return {ms: new Date(+Y, +Mo - 1, +D, +h, +mi, +(s || 0)).getTime(), allDay: false};
+  return {ms: Date.UTC(+Y, +Mo - 1, +D, +h, +mi, +(s || 0)) - off * 60000, allDay: false};
+}
+function icsDuration(v){
+  const m = String(v||'').match(/^([+-])?P(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$/);
+  if (!m) return null;
+  return ((+m[2]||0) * 7 * 864e5) + ((+m[3]||0) * 864e5) + ((+m[4]||0) * 36e5) + ((+m[5]||0) * 6e4) + ((+m[6]||0) * 1e3);
+}
+const ICS_DAYS = {SU:0, MO:1, TU:2, WE:3, TH:4, FR:5, SA:6};
+function icsOccurrences(startMs, rruleStr, exSet, winStart, winEnd, dur){
+  const r = {}; String(rruleStr).split(';').forEach(kv => { const [k, v] = kv.split('='); if (k) r[k.toUpperCase()] = v; });
+  const freq = r.FREQ, interval = Math.max(1, +(r.INTERVAL || 1)), count = r.COUNT ? +r.COUNT : Infinity;
+  const untilT = r.UNTIL ? icsTime({value: r.UNTIL, params: {}}, {}) : null;
+  const until = untilT ? untilT.ms + (untilT.allDay ? 864e5 - 1 : 0) : Infinity;
+  const byday = r.BYDAY ? r.BYDAY.split(',') : null;
+  const s0 = new Date(startMs), out = [];
+  let n = 0;
+  const take = ms => {            // returns false when the series is finished
+    if (ms > until) return false;
+    n++; if (n > count) return false;
+    if (!exSet.has(ms) && ms + dur >= winStart && ms <= winEnd) out.push(ms);
+    return ms <= winEnd;
+  };
+  const at = (y, mo, d) => new Date(y, mo, d, s0.getHours(), s0.getMinutes(), s0.getSeconds()).getTime();
+  const LIMIT = 3000;
+  if (freq === 'WEEKLY') {
+    const days = (byday ? byday.map(d => ICS_DAYS[d.slice(-2)]) : [s0.getDay()]).filter(d => d != null).sort((a,b) => a - b);
+    const ws = new Date(s0.getFullYear(), s0.getMonth(), s0.getDate() - s0.getDay());
+    outer: for (let w = 0; w < LIMIT; w++) {
+      for (const d of days) {
+        const ms = at(ws.getFullYear(), ws.getMonth(), ws.getDate() + w * 7 * interval + d);
+        if (ms < startMs) continue;
+        if (!take(ms)) break outer;
+      }
+    }
+  } else if (freq === 'DAILY') {
+    for (let k = 0; k < LIMIT; k++) if (!take(at(s0.getFullYear(), s0.getMonth(), s0.getDate() + k * interval))) break;
+  } else if (freq === 'MONTHLY') {
+    for (let k = 0; k < LIMIT; k++) {
+      const y = s0.getFullYear(), mo = s0.getMonth() + k * interval;
+      let ms;
+      if (byday) {
+        const mm = byday[0].match(/^([+-]?\d)?(SU|MO|TU|WE|TH|FR|SA)$/); if (!mm) break;
+        const ord = mm[1] ? +mm[1] : (r.BYSETPOS ? +r.BYSETPOS : 1), wd = ICS_DAYS[mm[2]];
+        const first = new Date(y, mo, 1), last = new Date(y, mo + 1, 0);
+        const day = ord > 0 ? 1 + ((wd - first.getDay() + 7) % 7) + (ord - 1) * 7 : last.getDate() - ((last.getDay() - wd + 7) % 7) + (ord + 1) * 7;
+        if (day < 1 || day > last.getDate()) continue;
+        ms = at(y, mo, day);
+      } else {
+        const dom = r.BYMONTHDAY ? +r.BYMONTHDAY : s0.getDate();
+        if (dom > new Date(y, mo + 1, 0).getDate()) continue;
+        ms = at(y, mo, dom);
+      }
+      if (ms < startMs) continue;
+      if (!take(ms)) break;
+    }
+  } else if (freq === 'YEARLY') {
+    for (let k = 0; k < LIMIT; k++) { const ms = at(s0.getFullYear() + k * interval, s0.getMonth(), s0.getDate()); if (!take(ms)) break; }
+  } else {
+    take(startMs);
+  }
+  return out;
+}
+function icsToEvents(text, winStart, winEnd){
+  const {vevents, tzOff} = icsParse(text);
+  const overrides = new Set();
+  vevents.forEach(v => { if (v['RECURRENCE-ID'] && v.UID) { const t = icsTime(v['RECURRENCE-ID'], tzOff); if (t) overrides.add(v.UID.value + '|' + t.ms); } });
+  const out = [];
+  for (const v of vevents) {
+    if (v.STATUS && /CANCELLED/i.test(v.STATUS.value)) continue;
+    const st = icsTime(v.DTSTART, tzOff); if (!st) continue;
+    let en = icsTime(v.DTEND, tzOff);
+    let dur = en ? en.ms - st.ms : (v.DURATION ? icsDuration(v.DURATION.value) : null);
+    if (dur == null || dur < 0) dur = st.allDay ? 864e5 : 0;
+    const title = icsUnescape(v.SUMMARY && v.SUMMARY.value).trim() || '(Không có tiêu đề)';
+    const location = icsUnescape(v.LOCATION && v.LOCATION.value).trim();
+    const blob = [v['X-MICROSOFT-SKYPETEAMSMEETINGURL'], v.LOCATION, v.DESCRIPTION, v.URL].filter(Boolean).map(p => icsUnescape(p.value)).join(' ');
+    const lm = blob.match(MEET_RE);
+    const base = {src: 'ics', cal: 'ics', title, location: location.slice(0, 200), link: lm ? lm[1] : '', url: '', allDay: st.allDay};
+    const uid = v.UID ? v.UID.value : title + st.ms;
+    let starts;
+    if (v.RRULE && !v['RECURRENCE-ID']) {
+      const ex = new Set((v.EXDATE || []).map(p => { const t = icsTime(p, tzOff); return t ? t.ms : null; }).filter(x => x != null));
+      starts = icsOccurrences(st.ms, v.RRULE.value, ex, winStart, winEnd, dur).filter(ms => !overrides.has(uid + '|' + ms));
+    } else {
+      starts = (st.ms + dur >= winStart && st.ms <= winEnd) ? [st.ms] : [];
+    }
+    starts.forEach(ms => out.push({...base, id: 'ics-' + uid + '-' + ms, start: ms, end: ms + dur}));
+  }
+  return out.sort((a,b) => a.start - b.start);
+}
+
+// ---------- calendar (read-only: Google Calendar + Outlook .ics) ----------
+// Kept under its own storage key: personal/company calendars are never part of “Xuất dữ liệu”.
+const CAL_KEY = 'kld:cal:v1';
+const CAL_SRC = {google: {name: 'Gmail', color: '#3b6fd6'}, ics: {name: 'Outlook OCB', color: '#c8662b'}};
+const GCAL_SCOPE = 'https://www.googleapis.com/auth/calendar.readonly';
+const WEEKDAYS = ['Chủ nhật','Thứ Hai','Thứ Ba','Thứ Tư','Thứ Năm','Thứ Sáu','Thứ Bảy'];
+const calDefaults = () => ({google: {clientId: '', email: '', calendars: [], events: [], syncedAt: 0}, ics: {events: [], importedAt: 0, fileName: ''}, hidden: {}, range: 14, showTasks: true});
+function loadCal(){
+  const d = calDefaults();
+  try { const s = JSON.parse(localStorage.getItem(CAL_KEY)); if (s) return {...d, ...s, google: {...d.google, ...(s.google||{})}, ics: {...d.ics, ...(s.ics||{})}, hidden: {...(s.hidden||{})}}; } catch {}
+  return d;
+}
+let cal = loadCal(), calBusy = false, calIdx = null;
+function saveCal(){ calIdx = null; try { localStorage.setItem(CAL_KEY, JSON.stringify(cal)); } catch { toast('Không lưu được lịch vào trình duyệt. Bộ nhớ trình duyệt có thể đã đầy.'); } }
+const gConnected = () => !!cal.google.syncedAt;
+const calConfigured = () => gConnected() || !!cal.ics.importedAt;
+const pad2 = n => String(n).padStart(2,'0');
+const dayKey = ms => { const d = new Date(ms); return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`; };
+const hhmm = ms => { const d = new Date(ms); return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`; };
+function gcalOf(e){ return e.src === 'google' ? cal.google.calendars.find(c => c.id === e.cal) : null; }
+function evColor(e){ const g = gcalOf(e); return g && g.color ? g.color : CAL_SRC[e.src].color; }
+function calVisible(){
+  const out = [];
+  if (!cal.hidden.google) cal.google.events.forEach(e => { const g = gcalOf(e); if (!g || g.on !== false) out.push(e); });
+  if (!cal.hidden.ics) out.push(...cal.ics.events);
+  return out;
+}
+// day -> events (all-day spans every day it covers; timed events sit on their start day)
+function calIndex(){
+  if (calIdx) return calIdx;
+  calIdx = {};
+  calVisible().forEach(e => {
+    if (e.allDay) { for (let t = e.start; t < Math.max(e.end, e.start + 1); t += 864e5) (calIdx[dayKey(t)] = calIdx[dayKey(t)] || []).push(e); }
+    else (calIdx[dayKey(e.start)] = calIdx[dayKey(e.start)] || []).push(e);
+  });
+  Object.values(calIdx).forEach(a => a.sort((x,y) => (y.allDay - x.allDay) || x.start - y.start));
+  return calIdx;
+}
+const eventsOn = key => calIndex()[key] || [];
+function calStatusText(){
+  const s = [];
+  if (gConnected()) s.push(`Gmail: cập nhật ${fmtDate(cal.google.syncedAt)}`);
+  if (cal.ics.importedAt) s.push(`Outlook: nhập ${fmtDate(cal.ics.importedAt)}`);
+  return s.join(' · ');
+}
+
+// ----- Google sign-in (Google Identity Services, token model, read-only scope) -----
+let gToken = null, gExp = 0, gisLoading = null;
+try { const t = JSON.parse(sessionStorage.getItem('kld:gtok') || 'null'); if (t && t.exp > Date.now() + 60000) { gToken = t.token; gExp = t.exp; } } catch {}
+const gTokenValid = () => !!gToken && gExp > Date.now() + 60000;
+function loadGis(){
+  if (window.google && google.accounts && google.accounts.oauth2) return Promise.resolve();
+  if (gisLoading) return gisLoading;
+  gisLoading = new Promise((res, rej) => {
+    const s = document.createElement('script'); s.src = 'https://accounts.google.com/gsi/client'; s.async = true;
+    s.onload = () => res(); s.onerror = () => { gisLoading = null; rej(new Error('gisload')); };
+    document.head.appendChild(s);
+  });
+  return gisLoading;
+}
+function requestGoogleToken(){
+  return new Promise((resolve, reject) => {
+    if (gTokenValid()) return resolve(gToken);
+    if (!cal.google.clientId) return reject(new Error('noclient'));
+    const start = () => {
+      try {
+        const client = google.accounts.oauth2.initTokenClient({
+          client_id: cal.google.clientId, scope: GCAL_SCOPE,
+          callback: r => {
+            if (!r || r.error) return reject(new Error((r && r.error) || 'denied'));
+            if (google.accounts.oauth2.hasGrantedAllScopes && !google.accounts.oauth2.hasGrantedAllScopes(r, GCAL_SCOPE)) return reject(new Error('access_denied'));
+            gToken = r.access_token; gExp = Date.now() + (+r.expires_in || 3600) * 1000;
+            try { sessionStorage.setItem('kld:gtok', JSON.stringify({token: gToken, exp: gExp})); } catch {}
+            resolve(gToken);
+          },
+          error_callback: err => reject(new Error((err && err.type) || 'popup_failed_to_open')),
+        });
+        client.requestAccessToken({prompt: gConnected() ? '' : 'consent', login_hint: cal.google.email || undefined});
+      } catch (e) { reject(e); }
+    };
+    // Call synchronously when the library is ready so the click still counts as a user action (popup blockers).
+    if (window.google && google.accounts && google.accounts.oauth2) start();
+    else loadGis().then(start, reject);
+  });
+}
+async function gGet(path, params){
+  const u = new URL('https://www.googleapis.com/calendar/v3/' + path);
+  Object.entries(params || {}).forEach(([k, v]) => u.searchParams.set(k, v));
+  let r;
+  try { r = await fetch(u, {headers: {Authorization: 'Bearer ' + gToken}}); } catch { throw new Error('network'); }
+  if (r.status === 401) { gToken = null; try { sessionStorage.removeItem('kld:gtok'); } catch {} throw new Error('expired'); }
+  if (!r.ok) { let m = ''; try { m = (await r.json()).error.message; } catch {} const e = new Error('http'); e.status = r.status; e.detail = m; throw e; }
+  return r.json();
+}
+function normGoogle(e, c){
+  if (!e.start) return null;
+  if ((e.attendees || []).some(a => a.self && a.responseStatus === 'declined')) return null;
+  const allDay = !!e.start.date;
+  const ds = s => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d).getTime(); };
+  const start = allDay ? ds(e.start.date) : Date.parse(e.start.dateTime);
+  const end = e.end ? (allDay ? ds(e.end.date) : Date.parse(e.end.dateTime)) : start;
+  if (isNaN(start)) return null;
+  const ep = e.conferenceData && (e.conferenceData.entryPoints || []).find(p => p.entryPointType === 'video');
+  const lm = [e.location, e.description].filter(Boolean).join(' ').match(MEET_RE);
+  return {id: 'g-' + c.id + '-' + e.id, src: 'google', cal: c.id, title: e.summary || '(Không có tiêu đề)', start, end, allDay,
+    location: String(e.location || '').slice(0, 200), link: e.hangoutLink || (ep && ep.uri) || (lm ? lm[1] : ''), url: e.htmlLink || ''};
+}
+async function syncGoogle(){
+  if (calBusy) return;
+  calBusy = true; render();
+  try {
+    await requestGoogleToken();
+    const list = await gGet('users/me/calendarList', {minAccessRole: 'reader', maxResults: '250'});
+    const prev = new Map(cal.google.calendars.map(c => [c.id, c]));
+    const items = list.items || [];
+    cal.google.calendars = items.map(c => ({id: c.id, summary: c.summaryOverride || c.summary || c.id, color: c.backgroundColor || CAL_SRC.google.color, primary: !!c.primary,
+      on: prev.has(c.id) ? prev.get(c.id).on !== false : (!!c.primary || c.selected === true)}));
+    const prim = items.find(c => c.primary); if (prim) cal.google.email = prim.id;
+    const t0 = dayStart(Date.now());
+    const tMin = new Date(t0 - 7 * 864e5).toISOString(), tMax = new Date(t0 + 62 * 864e5).toISOString();
+    const events = [];
+    for (const c of cal.google.calendars) {
+      let pageToken = '';
+      do {
+        const r = await gGet(`calendars/${encodeURIComponent(c.id)}/events`, {timeMin: tMin, timeMax: tMax, singleEvents: 'true', orderBy: 'startTime', maxResults: '250', ...(pageToken ? {pageToken} : {})});
+        (r.items || []).forEach(e => { if (e.status !== 'cancelled') { const n = normGoogle(e, c); if (n) events.push(n); } });
+        pageToken = r.nextPageToken || '';
+      } while (pageToken);
+    }
+    cal.google.events = events; cal.google.syncedAt = Date.now(); saveCal();
+    toast(`Đã cập nhật ${events.length} sự kiện từ Google Calendar`);
+  } catch (e) { googleError(e); }
+  finally { calBusy = false; render(); if ($('#dlgCal').open) renderCalSettings(); }
+}
+function googleError(e){
+  console.error(e);
+  const m = e && e.message;
+  const msg = {
+    noclient: 'Chưa có Google Client ID. Mở Cài đặt lịch và dán Client ID theo hướng dẫn.',
+    gisload: 'Không tải được trang đăng nhập Google. Kiểm tra kết nối mạng rồi thử lại.',
+    popup_closed: 'Bạn đã đóng cửa sổ đăng nhập Google. Bấm lại để kết nối.',
+    popup_failed_to_open: 'Trình duyệt chặn cửa sổ đăng nhập Google. Hãy cho phép cửa sổ bật lên (pop-up) cho trang này rồi bấm lại.',
+    access_denied: 'Chưa cấp quyền xem lịch. Khi đăng nhập, hãy tích ô cho phép xem lịch.',
+    denied: 'Google từ chối đăng nhập. Kiểm tra email đã có trong danh sách Test users của dự án Google Cloud.',
+    expired: 'Phiên đăng nhập Google đã hết hạn. Bấm “Làm mới lịch Google” để đăng nhập lại.',
+    network: 'Không kết nối được tới Google. Kiểm tra mạng rồi thử lại.',
+  }[m];
+  if (msg) return toast(msg);
+  if (m === 'http' && e.status === 403) return toast('Google từ chối truy cập lịch. Kiểm tra đã bật “Google Calendar API” trong dự án Google Cloud.');
+  if (m === 'http') return toast(`Google báo lỗi ${e.status}${e.detail ? ': ' + e.detail : ''}`);
+  toast('Không kết nối được Google Calendar: ' + (m || 'lỗi không rõ'));
+}
+function disconnectGoogle(){
+  try { if (gToken && window.google && google.accounts && google.accounts.oauth2) google.accounts.oauth2.revoke(gToken, () => {}); } catch {}
+  gToken = null; gExp = 0; try { sessionStorage.removeItem('kld:gtok'); } catch {}
+  cal.google = {...calDefaults().google, clientId: cal.google.clientId};
+  saveCal(); render(); renderCalSettings(); toast('Đã ngắt kết nối Google Calendar và xóa lịch Gmail khỏi trình duyệt này');
+}
+
+// ----- Outlook .ics import -----
+async function importIcsFile(f){
+  try {
+    const text = await f.text();
+    if (!/BEGIN:VCALENDAR/i.test(text)) throw new Error('format');
+    const t0 = dayStart(Date.now());
+    const events = icsToEvents(text, t0 - 30 * 864e5, t0 + 180 * 864e5);
+    cal.ics = {events, importedAt: Date.now(), fileName: f.name}; saveCal(); render(); if ($('#dlgCal').open) renderCalSettings();
+    toast(`Đã nhập ${events.length} sự kiện từ ${f.name}`);
+  } catch { toast('File không đúng định dạng lịch (.ics). Hãy xuất lại từ Outlook theo hướng dẫn.'); }
+}
+$('#icsFile').addEventListener('change', e => { const f = e.target.files && e.target.files[0]; if (f) importIcsFile(f); e.target.value = ''; });
+const pickIcs = () => $('#icsFile').click();
+
+// ----- rendering -----
+function evRow(e){
+  const now = Date.now(), past = !e.allDay && e.end < now, live = !e.allDay && e.start <= now && e.end > now;
+  const time = e.allDay ? `<span class="ev-t">Cả ngày</span>` : `<span class="ev-t">${hhmm(e.start)}</span><span class="ev-t2">${e.end > e.start ? hhmm(e.end) : ''}</span>`;
+  const g = gcalOf(e), srcName = e.src === 'google' ? (g && !g.primary ? g.summary : 'Gmail') : 'Outlook OCB';
+  const act = e.link ? `<a class="btn ev-join" href="${esc(e.link)}" target="_blank" rel="noopener noreferrer">Tham gia</a>`
+    : e.url ? `<a class="icon-btn" href="${esc(e.url)}" target="_blank" rel="noopener noreferrer" title="Mở trong Google Calendar" aria-label="Mở trong Google Calendar">${ICON.ext}</a>` : '';
+  return `<div class="ev${past ? ' past' : ''}${live ? ' live' : ''}" style="--c:${esc(evColor(e))}">
+    <div class="ev-time">${time}</div>
+    <div class="ev-main"><div class="ev-title">${esc(e.title)}${live ? ' <span class="ev-now">Đang diễn ra</span>' : ''}</div>
+      <div class="lmeta"><span class="ev-src"><span class="proj-dot" style="--c:${esc(evColor(e))};width:8px;height:8px"></span>${esc(srcName)}</span>${e.location ? `<span>${esc(e.location)}</span>` : ''}</div></div>
+    ${act}
+  </div>`;
+}
+function dayLabel(key){
+  const [y, m, d] = key.split('-').map(Number), dt = new Date(y, m - 1, d);
+  const rel = key === dayKey(Date.now()) ? 'Hôm nay · ' : key === dayKey(Date.now() + 864e5) ? 'Ngày mai · ' : '';
+  return `${rel}${WEEKDAYS[dt.getDay()]}, ${pad2(d)}/${pad2(m)}`;
+}
+const matchEvQ = e => !ui.q || [e.title, e.location].some(v => String(v||'').toLowerCase().includes(ui.q.toLowerCase()));
+function calSetupCard(){
+  return `<div class="empty cal-empty"><h3>Chưa có lịch nào</h3>
+    <p>Kết nối Google Calendar để tự cập nhật lịch Gmail, và nhập file lịch (.ics) xuất từ Outlook công ty. Web chỉ <strong>xem</strong> lịch, không tạo hay sửa gì trên Gmail và Outlook.</p>
+    <div class="row"><button class="btn primary" type="button" data-act="calSettings">${ICON.gear}Cài đặt lịch</button></div></div>`;
+}
+function renderCalContent(){
+  const c = $('#content');
+  if (!calConfigured()) { c.innerHTML = calSetupCard(); return; }
+  const t0 = dayStart(Date.now()), days = [];
+  for (let i = 0; i < cal.range; i++) days.push(dayKey(t0 + i * 864e5 + 3600e3));
+  const dueBy = {};
+  if (cal.showTasks) liveTasks().filter(isOpen).forEach(t => { if (t.due) (dueBy[t.due] = dueBy[t.due] || []).push(t); });
+  const overdue = cal.showTasks ? liveTasks().filter(t => isOpen(t) && t.due && t.due < days[0]) : [];
+  let html = '', total = 0;
+  if (overdue.length && !ui.q) html += `<section class="feed-sec"><h2 class="sec-title over-txt">Việc đã quá hạn <span class="count">${overdue.length}</span></h2><div class="flat-list">${overdue.sort((a,b) => a.due.localeCompare(b.due)).map(taskRow).join('')}</div></section>`;
+  days.forEach((k, i) => {
+    const evs = eventsOn(k).filter(matchEvQ), ts = (dueBy[k] || []).filter(matchTaskQ);
+    total += evs.length;
+    if (!evs.length && !ts.length && i > 0) return;
+    html += `<section class="feed-sec day-sec"><h2 class="sec-title${i === 0 ? ' today' : ''}">${dayLabel(k)}${evs.length ? ` <span class="count">${evs.length}</span>` : ''}</h2>
+      <div class="flat-list">${evs.length || ts.length ? evs.map(evRow).join('') + (ts.length ? `<div class="due-sub">Hạn công việc</div>` + ts.map(taskRow).join('') : '') : `<div class="ev-none">Không có lịch</div>`}</div></section>`;
+  });
+  c.innerHTML = `<div class="feed">${html || `<div class="empty"><h3>Không có sự kiện nào</h3><p>Không có lịch nào khớp trong ${cal.range} ngày tới.</p></div>`}</div>`;
+}
+function renderCalHead(){
+  const h = $('#projHead');
+  const n = (() => { let s = 0; const t0 = dayStart(Date.now()); for (let i = 0; i < cal.range; i++) s += eventsOn(dayKey(t0 + i * 864e5 + 3600e3)).length; return s; })();
+  const meta = calConfigured() ? `${n} sự kiện trong ${cal.range} ngày tới · ${calStatusText()}` : 'Xem lịch Gmail và Outlook cùng công việc';
+  const items = [gConnected() ? `<button type="button" data-act="calRefresh">Làm mới lịch Google</button>` : '', `<button type="button" data-act="calImport">Nhập lịch Outlook (.ics)</button>`, `<button type="button" data-act="calSettings">Cài đặt lịch</button>`].filter(Boolean);
+  const menu = `<div class="menu-wrap"><button class="btn" type="button" data-act="projMenu" aria-haspopup="true" aria-expanded="false" title="Tùy chọn lịch" aria-label="Tùy chọn lịch" style="padding:7px 9px">${ICON.more}</button><div class="menu" id="projMenu" hidden>${items.join('')}</div></div>`;
+  const refresh = gConnected() ? `<button class="btn" type="button" data-act="calRefresh"${calBusy ? ' disabled' : ''}>${ICON.refresh}${calBusy ? 'Đang cập nhật…' : 'Làm mới'}</button>` : '';
+  h.innerHTML = `<div class="phead"><div class="phead-text"><h1>Lịch</h1><p>${meta}</p></div><div class="phead-actions">${refresh}${menu}</div></div>`;
+}
+function renderCalToolbar(){
+  const tb = $('#toolbar');
+  if (!calConfigured()) { tb.innerHTML = ''; return; }
+  tb.innerHTML = `<span class="tb-count">${calBusy ? 'Đang cập nhật lịch Google…' : (gConnected() && !gTokenValid() && Date.now() - cal.google.syncedAt > 36e5 ? `<button type="button" class="linkbtn" data-act="calRefresh">Lịch Gmail đã cũ, bấm để làm mới</button>` : '')}</span>
+    <div class="tb-right">
+      <label class="check sm-check" for="calTasks"><input type="checkbox" id="calTasks"${cal.showTasks ? ' checked' : ''}> Hạn công việc</label>
+      <select class="sm" id="calRange" aria-label="Khoảng thời gian">${[7,14,30,60].map(d => `<option value="${d}"${cal.range===d?' selected':''}>${d} ngày tới</option>`).join('')}</select>
+    </div>`;
+}
+function renderCalSidebar(){
+  const el = $('#projList'), t0 = dayStart(Date.now());
+  const cnt = src => { let s = 0; for (let i = 0; i < cal.range; i++) s += eventsOn(dayKey(t0 + i * 864e5 + 3600e3)).filter(e => e.src === src).length; return s; };
+  let h = `<button type="button" class="tree-item root active" data-calnav="1"><span class="tree-ico">${ICON.cal}</span><span class="proj-name">Lịch ${cal.range} ngày tới</span></button><div class="side-sub">Nguồn lịch</div>`;
+  if (gConnected()) {
+    h += `<label class="src-row"><input type="checkbox" data-src="google"${cal.hidden.google ? '' : ' checked'}><span class="proj-dot" style="--c:${CAL_SRC.google.color}"></span><span class="proj-name">Gmail</span><span class="count">${cal.hidden.google ? '' : cnt('google')}</span></label>`;
+    if (!cal.hidden.google && cal.google.calendars.length > 1) h += cal.google.calendars.map(c => `<label class="src-row sub"><input type="checkbox" data-gcal="${esc(c.id)}"${c.on !== false ? ' checked' : ''}><span class="proj-dot" style="--c:${esc(c.color)}"></span><span class="proj-name">${esc(c.primary ? 'Lịch chính' : c.summary)}</span></label>`).join('');
+  }
+  if (cal.ics.importedAt) h += `<label class="src-row"><input type="checkbox" data-src="ics"${cal.hidden.ics ? '' : ' checked'}><span class="proj-dot" style="--c:${CAL_SRC.ics.color}"></span><span class="proj-name">Outlook OCB</span><span class="count">${cal.hidden.ics ? '' : cnt('ics')}</span></label>`;
+  if (!calConfigured()) h += `<div class="tree-empty" style="padding-left:8px">Chưa kết nối lịch nào.</div>`;
+  h += `<button type="button" class="tree-add" data-act="calSettings" style="padding-left:8px">${ICON.gear}Cài đặt lịch</button>`;
+  el.innerHTML = h;
+}
+function calTodayBlock(){
+  if (!calConfigured()) return '';
+  const evs = eventsOn(dayKey(Date.now()));
+  return `<section class="feed-sec"><h2 class="sec-title">Lịch hôm nay <span class="count">${evs.length}</span></h2><div class="flat-list">${evs.length ? evs.map(evRow).join('') : `<div class="ev-none">Hôm nay không có lịch</div>`}</div></section>`;
+}
+function dueCalChip(t){
+  if (!t.due || isDone(t) || !calConfigured() || t.due < todayStr()) return '';
+  const n = eventsOn(t.due).length;
+  return n ? `<span class="tmeet" title="Ngày ${fmtDay(t.due)} có ${n} lịch">${ICON.users}${n}</span>` : '';
+}
+function dueCalHint(){
+  const el = $('#tk-due-cal'); if (!el) return;
+  const d = $('#tk-due').value; const evs = d && calConfigured() ? eventsOn(d) : [];
+  el.hidden = !evs.length;
+  el.textContent = evs.length ? `Ngày ${fmtDay(d)} có ${evs.length} lịch: ` + evs.slice(0, 3).map(e => (e.allDay ? 'Cả ngày ' : hhmm(e.start) + ' ') + e.title).join('; ') + (evs.length > 3 ? '…' : '') : '';
+}
+$('#tk-due').addEventListener('input', dueCalHint);
+
+// ----- settings dialog -----
+function renderCalSettings(){
+  $('#cal-cid').value = cal.google.clientId || '';
+  $('#cal-g-status').innerHTML = gConnected()
+    ? `<span class="ok-dot"></span>Đã kết nối <strong>${esc(cal.google.email || 'Google')}</strong> · ${cal.google.events.length} sự kiện · cập nhật ${fmtDate(cal.google.syncedAt)}`
+    : 'Chưa kết nối.';
+  $('#cal-g-connect').textContent = gConnected() ? 'Làm mới lịch Google' : 'Kết nối Google Calendar';
+  $('#cal-g-connect').disabled = calBusy;
+  $('#cal-g-disconnect').hidden = !gConnected();
+  $('#cal-o-status').innerHTML = cal.ics.importedAt
+    ? `<span class="ok-dot"></span>Đã nhập <strong>${cal.ics.events.length}</strong> sự kiện từ <span class="mono">${esc(cal.ics.fileName)}</span> · ${fmtDate(cal.ics.importedAt)}`
+    : 'Chưa nhập file lịch nào.';
+  $('#cal-o-clear').hidden = !cal.ics.importedAt;
+}
+function openCalSettings(){ renderCalSettings(); $('#dlgCal').showModal(); }
+$('#cal-cid').addEventListener('change', () => {
+  const v = $('#cal-cid').value.trim();
+  if (v && !/\.apps\.googleusercontent\.com$/.test(v)) { toast('Client ID thường có dạng …apps.googleusercontent.com. Hãy kiểm tra lại.'); }
+  if (v !== cal.google.clientId) { cal.google.clientId = v; gToken = null; saveCal(); }
+  if (v) loadGis().catch(() => {});
+});
+$('#cal-g-connect').addEventListener('click', () => {
+  const v = $('#cal-cid').value.trim();
+  if (!v) { toast('Hãy dán Google Client ID trước.'); $('#cal-cid').focus(); return; }
+  if (v !== cal.google.clientId) { cal.google.clientId = v; gToken = null; saveCal(); }
+  syncGoogle();
+});
+$('#cal-g-disconnect').addEventListener('click', async () => {
+  $('#dlgCal').close();
+  if (await confirmAsk('Ngắt kết nối Google Calendar', 'Thu hồi quyền xem lịch và xóa lịch Gmail đã lưu trong trình duyệt này? Lịch trên Google không bị ảnh hưởng.', 'Ngắt kết nối')) disconnectGoogle();
+});
+$('#cal-o-import').addEventListener('click', pickIcs);
+$('#cal-o-clear').addEventListener('click', async () => {
+  $('#dlgCal').close();
+  if (await confirmAsk('Xóa lịch Outlook', 'Xóa lịch Outlook đã nhập khỏi trình duyệt này? Lịch trong Outlook không bị ảnh hưởng.')) { cal.ics = calDefaults().ics; saveCal(); render(); toast('Đã xóa lịch Outlook'); }
+});
+
+// ----- events -----
+$('#projList').addEventListener('change', e => {
+  if (ui.mode !== 'cal') return;
+  const s = e.target.dataset.src, g = e.target.dataset.gcal;
+  if (s) { cal.hidden[s] = !e.target.checked; saveCal(); render(); }
+  if (g) { const c = cal.google.calendars.find(x => x.id === g); if (c) { c.on = e.target.checked; saveCal(); render(); } }
+});
+$('#toolbar').addEventListener('change', e => {
+  if (ui.mode !== 'cal') return;
+  if (e.target.id === 'calRange') { cal.range = +e.target.value; saveCal(); render(); }
+  if (e.target.id === 'calTasks') { cal.showTasks = e.target.checked; saveCal(); render(); }
+});
+$('#content').addEventListener('click', e => {
+  if (ui.mode !== 'cal') return;
+  const card = e.target.closest('[data-tid]'); if (card && !e.target.closest('a')) openTask(tasks.find(t => t.id === card.dataset.tid));
+});
+// keep Google events fresh without a popup when this tab already holds a valid token
+function calAutoRefresh(){
+  if (cal.google.clientId) loadGis().catch(() => {});
+  if (gConnected() && gTokenValid() && Date.now() - cal.google.syncedAt > 10 * 60e3) syncGoogle();
+}
+
 // ---------- local storage database ----------
 const LocalDB = (() => {
   const KEY = 'kld:data:v1';
@@ -1955,6 +2515,8 @@ async function boot(){
   db.collection('links').onSnapshot(s => { links = s.docs.map(d => ({id:d.id, ...d.data()})); loaded.l = true; if (loaded.p) clearTimeout(timer); render(); }, onErr);
   db.collection('tasks').onSnapshot(s => { tasks = s.docs.map(d => ({id:d.id, ...d.data()})); loaded.t = true; render(); migrateTasks(); }, onErr);
   db.collection('boards').onSnapshot(s => { boards = s.docs.map(d => ({id:d.id, ...d.data()})); loaded.b = true; render(); migrateTasks(); }, onErr);
+  $('#cal-origin').textContent = location.origin;
+  calAutoRefresh();
   db.collection('groups').onSnapshot(s => { groups = s.docs.map(d => ({id:d.id, ...d.data()})); loaded.g = true; render(); }, onErr);
   db.doc('config/types').onSnapshot(s => {
     const list = s.exists && Array.isArray(s.data().list) && s.data().list.length ? s.data().list : DEFAULT_TYPES;
