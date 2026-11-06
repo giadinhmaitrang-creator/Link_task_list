@@ -186,6 +186,7 @@ dialog::backdrop{background:rgba(10,20,16,.45)}
 
 .local-note{margin:14px 8px 0;font-size:12px;color:var(--muted);line-height:1.5}
 
+
 /* ---------- boards sidebar ---------- */
 .side-sub{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;padding:12px 8px 4px}
 .tree-item.board-item{width:100%;padding-left:8px}
@@ -401,20 +402,91 @@ dialog::backdrop{background:rgba(10,20,16,.45)}
   .type-row .code-in{grid-column:2}
   .type-row .pat{grid-column:1 / -1}
 }
+
+/* ---------- phone layout ---------- */
+.bottomnav,.fab-wrap{display:none}
+@media (max-width:640px){
+  input,select,textarea{font-size:16px!important}
+  .topbar{position:static}
+  .topbar .wrap{gap:8px;padding-block:8px;flex-wrap:wrap}
+  .brand{font-size:15px;gap:8px}
+  .brand-mark{width:26px;height:26px}
+  #btnData,#btnTypes{padding:0;width:38px;height:38px;justify-content:center}
+  #btnData .lbl,#btnTypes .lbl{display:none}
+  .search{order:3;flex-basis:100%}
+  .search input{padding-block:9px}
+  .layout{padding-block:12px calc(96px + env(safe-area-inset-bottom,0px));gap:12px}
+  .main{gap:12px}
+  #modeBar{display:none}
+  .cat-sum{padding:10px 12px}
+  .cat-path{display:flex;flex-direction:column;min-width:0}
+  .cat-k{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  #catSumText{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .phead{flex-wrap:nowrap;gap:8px;align-items:flex-start}
+  .phead-text{flex:1 1 auto}
+  .phead h1{font-size:20px}
+  .phead p{font-size:12.5px;margin-top:2px}
+  .phead-actions > .btn{display:none}
+  .phead-actions .menu-wrap .btn{display:inline-flex;width:38px;height:38px;padding:0!important;justify-content:center}
+  .tab{padding:8px 10px}
+  .toolbar{flex-wrap:nowrap;overflow-x:auto;gap:8px;padding-bottom:2px;scrollbar-width:none}
+  .toolbar::-webkit-scrollbar{display:none}
+  .tb-count{white-space:nowrap;margin-right:0;font-size:12.5px;flex:none}
+  .row2 > .field,.row3 > .field{min-width:0}
+  .field input[type=date]{min-width:0;max-width:100%;-webkit-appearance:none;appearance:none;min-height:44px}
+  .tb-right{flex-wrap:nowrap;margin-left:auto}
+  select.sm{font-size:14px!important;padding:7px 8px}
+  .icon-btn{width:36px;height:36px}
+  .lact .icon-btn{width:36px;height:34px}
+  .empty{padding:28px 18px}
+  /* board: one column per swipe */
+  .board{gap:10px;scroll-snap-type:x mandatory;margin-right:calc(-1 * max(16px, env(safe-area-inset-right,0px)));padding-right:16px;min-height:0}
+  .bcol{flex:0 0 84%;max-width:none;max-height:none}
+  .tcard{padding:11px 12px}
+  .qadd-btn{padding:10px 8px}
+  /* bottom navigation */
+  .bottomnav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--surface);border-top:1px solid var(--line);
+    padding:4px max(10px,env(safe-area-inset-right,0px)) calc(4px + env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-left,0px))}
+  .bottomnav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:1px;padding:7px 4px 6px;border:0;background:transparent;color:var(--muted);font-size:11.5px;font-weight:500;position:relative;cursor:pointer}
+  .bottomnav button svg{width:22px;height:22px}
+  .bottomnav button.on{color:var(--accent);font-weight:700}
+  .bn-count{position:absolute;top:3px;left:calc(50% + 8px);min-width:18px;height:16px;padding:0 4px;border-radius:8px;background:var(--surface-2);color:var(--fg);font-size:10px;font-weight:600;line-height:16px;font-family:var(--f-mono)}
+  .bottomnav button.on .bn-count{background:var(--accent);color:var(--accent-fg)}
+  .fab-wrap:not([hidden]){display:block}
+  .fab{position:fixed;z-index:31;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(72px + env(safe-area-inset-bottom,0px));width:54px;height:54px;border-radius:16px;border:0;background:var(--accent);color:var(--accent-fg);display:grid;place-items:center;box-shadow:0 6px 18px rgba(20,40,34,.28);cursor:pointer}
+  .fab[aria-expanded="true"] svg{transform:rotate(45deg)}
+  .fab svg{transition:transform .15s}
+  .fab-menu{position:fixed;z-index:31;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(134px + env(safe-area-inset-bottom,0px));top:auto;min-width:200px}
+  .fab-menu button{padding:12px 14px;font-size:15px}
+  .bulkbar{position:fixed;z-index:29;left:8px;right:8px;bottom:calc(66px + env(safe-area-inset-bottom,0px));box-shadow:var(--shadow)}
+  .toast{bottom:calc(140px + env(safe-area-inset-bottom,0px))}
+  /* dialogs become full-screen sheets */
+  dialog:not(#dlgConfirm){width:100vw;max-width:100vw;height:100dvh;max-height:100dvh;margin:0;border-radius:0;border:0}
+  dialog:not(#dlgConfirm) .dlg{height:100%;max-height:100dvh}
+  dialog:not(#dlgConfirm) .dlg-head{padding-top:calc(14px + env(safe-area-inset-top,0px))}
+  .dlg-body{flex:1;padding:14px 16px}
+  .dlg-foot{padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px))}
+  .dlg-foot .btn{padding:10px 14px}
+  .row3,.row2{grid-template-columns:1fr 1fr;gap:10px}
+  .row3 .field:last-child{grid-column:1 / -1}
+  .ckrow .ck-text{padding:8px 6px}
+  .lpick{padding:7px 12px}
+}
+
 </style>
 </head>
 <body>
 
 <header class="topbar">
   <div class="wrap">
-    <div class="brand"><span class="brand-mark">⌘L</span>Kho Link Dự Án</div>
+    <div class="brand"><span class="brand-mark">⌘L</span><span class="brand-name">Kho Link Dự Án</span></div>
     <label class="search" for="q">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
       <input id="q" type="search" placeholder="Tìm theo tiêu đề, URL, tag, ghi chú…" autocomplete="off">
     </label>
     <div class="menu-wrap">
-      <button class="btn" id="btnData" type="button" aria-haspopup="true" aria-expanded="false">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg>Dữ liệu
+      <button class="btn" id="btnData" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Dữ liệu">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg><span class="lbl">Dữ liệu</span>
       </button>
       <div class="menu" id="dataMenu" hidden>
         <button type="button" id="btnExport">Xuất dữ liệu (.json)</button>
@@ -422,8 +494,8 @@ dialog::backdrop{background:rgba(10,20,16,.45)}
       </div>
       <input type="file" id="importFile" accept=".json,application/json" hidden>
     </div>
-    <button class="btn" id="btnTypes" type="button">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h10M4 12h16M4 17h7"/></svg>Loại link
+    <button class="btn" id="btnTypes" type="button" aria-label="Loại link">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h10M4 12h16M4 17h7"/></svg><span class="lbl">Loại link</span>
     </button>
   </div>
 </header>
@@ -431,7 +503,7 @@ dialog::backdrop{background:rgba(10,20,16,.45)}
 <div class="wrap layout">
   <aside class="sidebar">
     <details id="cat" open>
-      <summary class="cat-sum"><span id="catSumText">Danh mục dự án</span><svg class="caret" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></summary>
+      <summary class="cat-sum"><span class="cat-path"><span class="cat-k" id="catSumKind">Danh mục</span><span id="catSumText">Tất cả tài liệu</span></span><svg class="caret" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></summary>
       <div class="side-head"><span>Danh mục</span><button class="icon-btn write-only" id="btnNewProj" type="button" title="Tạo dự án" aria-label="Tạo dự án"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button></div>
       <nav class="tree" id="projList" aria-label="Danh mục dự án"></nav>
       <p class="local-note">Dữ liệu lưu trên trình duyệt này. Hãy dùng <strong>Dữ liệu → Xuất dữ liệu</strong> để sao lưu hoặc chuyển sang máy khác.</p>
@@ -573,6 +645,11 @@ dialog::backdrop{background:rgba(10,20,16,.45)}
   <div class="dlg-foot"><button class="btn" value="cancel">Hủy</button><button class="btn primary" value="ok" id="cfOk" style="background:var(--danger);border-color:var(--danger)">Xóa</button></div>
 </form></dialog>
 
+<nav class="bottomnav" id="bottomNav" aria-label="Chế độ xem"></nav>
+<div class="fab-wrap" id="fabWrap" hidden>
+  <div class="menu fab-menu" id="fabMenu" hidden></div>
+  <button type="button" class="fab" id="fab" aria-label="Thêm mới" aria-haspopup="true" aria-expanded="false"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg></button>
+</div>
 <div class="toast" id="toast" hidden></div>
 
 <script src="vendor/sortable-1.15.2.min.js"></script>
@@ -748,7 +825,17 @@ function render(){
 const renderHead = () => ui.mode === 'tasks' ? renderTasksHead() : renderDocsHead();
 const renderToolbar = () => ui.mode === 'tasks' ? renderTasksToolbar() : renderDocsToolbar();
 const renderContent = () => ui.mode === 'tasks' ? renderTasksContent() : renderDocsContent();
-const renderSidebar = () => { const t = $('#catSumText'); if (t) t.textContent = ui.mode === 'tasks' ? 'Danh mục bảng công việc' : 'Danh mục dự án'; return ui.mode === 'tasks' ? renderTasksSidebar() : renderDocsSidebar(); };
+function catPath(){
+  if (ui.mode === 'tasks') { const b = ui.board === 'all' ? null : boards.find(x => x.id === ui.board); return ['Bảng công việc', b ? b.name : 'Việc cần chú ý']; }
+  const p = ui.project === 'all' ? null : projById(ui.project);
+  if (!p) return ['Danh mục dự án', 'Tất cả tài liệu'];
+  const g = ui.group === '_none' ? {name:'Chưa phân nhóm'} : ui.group !== 'all' ? groupById(ui.group) : null;
+  return ['Danh mục dự án', g ? `${p.name} › ${g.name}` : p.name];
+}
+const renderSidebar = () => {
+  const [k, t] = catPath(); const a = $('#catSumKind'), b = $('#catSumText'); if (a) a.textContent = k; if (b) b.textContent = t;
+  return ui.mode === 'tasks' ? renderTasksSidebar() : renderDocsSidebar();
+};
 const renderTabs = () => ui.mode === 'tasks' ? renderBoardTabs() : renderDocsTabs();
 const projOrder = () => projects.slice().sort((a,b) => String(a.name).localeCompare(String(b.name),'vi'));
 function filtered(){
@@ -1332,9 +1419,12 @@ function renderTasksSidebar(){
   el.innerHTML = h;
 }
 function renderModeBar(){
-  const el = $('#modeBar');
-  if (!db || !loaded.p) { el.innerHTML = ''; return; }
+  const el = $('#modeBar'), bn = $('#bottomNav');
+  $('#fabWrap').hidden = !db || !loaded.p || !canWrite;
+  if (!db || !loaded.p) { el.innerHTML = ''; bn.innerHTML = ''; return; }
   const nd = links.length, nt = liveTasks().filter(isOpen).length;
+  bn.innerHTML = `<button type="button" data-mode="docs" class="${ui.mode==='docs'?'on':''}" aria-current="${ui.mode==='docs'}">${ICON.doc}<span>Tài liệu</span><span class="bn-count">${nd}</span></button>
+    <button type="button" data-mode="tasks" class="${ui.mode==='tasks'?'on':''}" aria-current="${ui.mode==='tasks'}">${ICON.board}<span>Công việc</span><span class="bn-count">${nt}</span></button>`;
   el.innerHTML = `<div class="modebar" role="tablist" aria-label="Chế độ xem">
     <button type="button" role="tab" data-mode="docs" class="${ui.mode==='docs'?'on':''}" aria-selected="${ui.mode==='docs'}">${ICON.doc}Tài liệu<span class="count">${nd}</span></button>
     <button type="button" role="tab" data-mode="tasks" class="${ui.mode==='tasks'?'on':''}" aria-selected="${ui.mode==='tasks'}">${ICON.board}Công việc<span class="count">${nt}</span></button>
@@ -1500,6 +1590,29 @@ function renderTasksContent(){
 }
 
 // ----- task events -----
+const fabRun = a => ({add: () => openLink(), bulk: () => openBulk(), newProj: () => openProj(), addTask: () => openTask(), newBoard: () => openBoardSettings(true)}[a] || (() => {}))();
+function fabItems(){
+  if (ui.mode === 'tasks') return boards.length
+    ? [['addTask','Thêm công việc'],['newBoard','Tạo bảng mới']]
+    : [['newBoard','Tạo bảng đầu tiên']];
+  return projects.length
+    ? [['add','Thêm link'],['bulk','Thêm nhiều link'],['newProj','Tạo dự án mới']]
+    : [['newProj','Tạo dự án đầu tiên']];
+}
+$('#fab').addEventListener('click', e => {
+  e.stopPropagation();
+  const m = $('#fabMenu');
+  if (!m.hidden) { m.hidden = true; $('#fab').setAttribute('aria-expanded','false'); return; }
+  const items = fabItems();
+  if (items.length === 1 || (ui.mode === 'tasks' && ui.board !== 'all')) { fabRun(items[0][0]); return; }
+  m.innerHTML = items.map(([a,l]) => `<button type="button" data-act="${a}">${l}</button>`).join('');
+  m.hidden = false; $('#fab').setAttribute('aria-expanded','true');
+});
+document.addEventListener('click', e => { if (!e.target.closest('#fab')) { $('#fabMenu').hidden = true; $('#fab').setAttribute('aria-expanded','false'); } });
+$('#bottomNav').addEventListener('click', e => {
+  const b = e.target.closest('[data-mode]'); if (!b || b.dataset.mode === ui.mode) return;
+  ui.mode = b.dataset.mode; store.set('mode', ui.mode); ui.selected.clear(); ui.qadd = null; render(); window.scrollTo({top: 0});
+});
 $('#modeBar').addEventListener('click', e => {
   const b = e.target.closest('[data-mode]'); if (!b || b.dataset.mode === ui.mode) return;
   ui.mode = b.dataset.mode; store.set('mode', ui.mode); ui.selected.clear(); ui.qadd = null; render();
