@@ -155,7 +155,7 @@ dialog::backdrop{background:rgba(10,20,16,.45)}
 .field{display:flex;flex-direction:column;gap:5px}
 .field label{font-size:12.5px;font-weight:600}
 .field .hint{font-size:12px;color:var(--muted)}
-.field input[type=text],.field input[type=url],.field textarea,.field select{padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);width:100%}
+.field input[type=text],.field input[type=url],.field input[type=password],.field textarea,.field select{padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);width:100%}
 .field textarea{resize:vertical;min-height:70px}
 .mono{font-family:var(--f-mono);font-size:13px}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -440,6 +440,18 @@ dialog::backdrop{background:rgba(10,20,16,.45)}
   .ev .ev-join,.ev .icon-btn{grid-column:2;justify-self:start}
 }
 
+/* ---------- sync ---------- */
+#btnData{position:relative}
+.sync-dot{position:absolute;top:5px;right:5px;width:8px;height:8px;border-radius:50%;border:1.5px solid var(--surface)}
+.sync-dot.ok{background:#2f8f5b}
+.sync-dot.pending{background:#b08a12}
+.sync-dot.error{background:var(--danger)}
+.menu-note{padding:6px 10px 4px;font-size:12px;color:var(--muted)}
+.err-dot,.pend-dot{width:8px;height:8px;border-radius:50%;flex:none}
+.err-dot{background:var(--danger)}
+.pend-dot{background:#b08a12}
+#sy-history{text-decoration:none;color:var(--fg)}
+
 /* ---------- phone layout ---------- */
 .bottomnav,.fab-wrap{display:none}
 @media (max-width:640px){
@@ -523,9 +535,12 @@ dialog::backdrop{background:rgba(10,20,16,.45)}
     </label>
     <div class="menu-wrap">
       <button class="btn" id="btnData" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Dữ liệu">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg><span class="lbl">Dữ liệu</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg><span class="lbl">Dữ liệu</span><span class="sync-dot" id="syncDot" hidden></span>
       </button>
       <div class="menu" id="dataMenu" hidden>
+        <div class="menu-note" id="syncLine">Chưa bật đồng bộ</div>
+        <button type="button" id="btnSync">Đồng bộ GitHub…</button>
+        <hr>
         <button type="button" id="btnExport">Xuất dữ liệu (.json)</button>
         <button type="button" id="btnImport">Nhập dữ liệu từ file…</button>
       </div>
@@ -544,7 +559,7 @@ dialog::backdrop{background:rgba(10,20,16,.45)}
       <summary class="cat-sum"><span class="cat-path"><span class="cat-k" id="catSumKind">Danh mục</span><span id="catSumText">Tất cả tài liệu</span></span><svg class="caret" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></summary>
       <div class="side-head"><span>Danh mục</span><button class="icon-btn write-only" id="btnNewProj" type="button" title="Tạo dự án" aria-label="Tạo dự án"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button></div>
       <nav class="tree" id="projList" aria-label="Danh mục dự án"></nav>
-      <p class="local-note">Dữ liệu lưu trên trình duyệt này. Hãy dùng <strong>Dữ liệu → Xuất dữ liệu</strong> để sao lưu hoặc chuyển sang máy khác.</p>
+      <p class="local-note" id="storeNote">Dữ liệu lưu trên trình duyệt này. Hãy dùng <strong>Dữ liệu → Xuất dữ liệu</strong> để sao lưu hoặc chuyển sang máy khác.</p>
     </details>
   </aside>
   <main class="main">
@@ -711,6 +726,33 @@ dialog::backdrop{background:rgba(10,20,16,.45)}
   </div>
   <div class="dlg-foot"><button class="btn" type="button" data-close>Đóng</button></div>
 </div></dialog>
+
+<!-- GitHub sync dialog -->
+<dialog id="dlgSync" class="wide"><div class="dlg">
+  <div class="dlg-head"><h3>Đồng bộ GitHub</h3><span class="dlg-sub">Dùng chung dữ liệu trên mọi máy</span></div>
+  <div class="dlg-body">
+    <p class="cal-status" id="sy-status"></p>
+    <div class="field"><label for="sy-repo">Kho dữ liệu (phải là Private)</label><input type="text" id="sy-repo" class="mono" autocomplete="off" spellcheck="false" placeholder="ten-tai-khoan/Link_task_data"></div>
+    <div class="field"><label for="sy-token">Mã truy cập GitHub (fine-grained token)</label><input type="password" id="sy-token" class="mono" autocomplete="off" spellcheck="false" placeholder="github_pat_…"><span class="hint">Mã chỉ được lưu trong trình duyệt này. Không gửi mã cho ai, kể cả qua chat.</span></div>
+    <div class="row-btns"><button type="button" class="btn primary" id="sy-connect">Kết nối và đồng bộ</button><button type="button" class="btn" id="sy-now">Đồng bộ ngay</button><a class="btn" id="sy-history" target="_blank" rel="noopener noreferrer">Lịch sử phiên bản</a><button type="button" class="btn danger" id="sy-off">Ngắt đồng bộ</button></div>
+    <details class="guide" id="sy-guide"><summary>Cách tạo kho và mã truy cập (làm một lần)</summary>
+      <ol>
+        <li>Tạo kho riêng tư: <a href="https://github.com/new?name=Link_task_data&amp;visibility=private" target="_blank" rel="noopener noreferrer">github.com/new</a>, tên <span class="mono">Link_task_data</span>, chọn <strong>Private</strong> → <strong>Create repository</strong>.</li>
+        <li>Tạo mã: <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener noreferrer">Fine-grained token</a>. <strong>Expiration</strong>: 1 năm. <strong>Repository access</strong>: <em>Only select repositories</em> → chọn <span class="mono">Link_task_data</span>. <strong>Permissions → Repository permissions → Contents</strong>: <em>Read and write</em>. Bấm <strong>Generate token</strong>.</li>
+        <li>Dán mã vào ô trên, bấm <strong>Kết nối và đồng bộ</strong>. Làm trước trên máy đang có nhiều dữ liệu nhất, sau đó mới làm trên các máy khác.</li>
+      </ol>
+    </details>
+    <p class="hint">Web tự lưu lên GitHub vài giây sau mỗi thay đổi, và tải bản mới khi mở hoặc quay lại trang. Mỗi lần lưu là một phiên bản trong lịch sử của kho. Lịch Gmail/Outlook không được đồng bộ.</p>
+  </div>
+  <div class="dlg-foot"><button class="btn" type="button" data-close>Đóng</button></div>
+</div></dialog>
+
+<!-- Sync choice dialog -->
+<dialog id="dlgSyncChoice"><form class="dlg" method="dialog">
+  <div class="dlg-head"><h3>Cả hai nơi đều có dữ liệu</h3></div>
+  <div class="dlg-body"><p id="sc-text" style="margin:0"></p><p style="margin:0;color:var(--muted);font-size:13px"><strong>Gộp</strong>: giữ tất cả, mục nào sửa ở cả hai nơi thì lấy bản sửa sau cùng. <strong>Dùng dữ liệu GitHub</strong>: bỏ dữ liệu trên máy này.</p></div>
+  <div class="dlg-foot"><button class="btn" value="cancel">Hủy</button><button class="btn" value="remote">Dùng dữ liệu GitHub</button><button class="btn primary" value="merge">Gộp (khuyên dùng)</button></div>
+</form></dialog>
 
 <!-- Confirm dialog -->
 <dialog id="dlgConfirm"><form class="dlg" method="dialog">
@@ -2422,16 +2464,18 @@ const LocalDB = (() => {
   const subs = new Set();
   let pending = false;
   const notify = () => { if (pending) return; pending = true; queueMicrotask(() => { pending = false; subs.forEach(fn => fn()); }); };
-  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(data)); } catch (e) { throw {code:'quota_exceeded', message:String(e)}; } };
+  let hook = null;
+  const save = (quiet) => { try { localStorage.setItem(KEY, JSON.stringify(data)); } catch (e) { throw {code:'quota_exceeded', message:String(e)}; } if (hook && !quiet) { try { hook(); } catch {} } };
+  const untomb = (col, id) => { if (data._deleted && data._deleted[col]) delete data._deleted[col][id]; };
   const clone = v => JSON.parse(JSON.stringify(v));
   const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
   window.addEventListener('storage', e => { if (e.key === KEY) { data = load(); notify(); } });
   function docRef(col, id){
     return {
       id,
-      async set(v){ (data[col] = data[col] || {})[id] = clone(v); save(); notify(); },
-      async update(v){ const c = data[col] = data[col] || {}; c[id] = {...(c[id]||{}), ...clone(v)}; save(); notify(); },
-      async delete(){ if (data[col]) delete data[col][id]; save(); notify(); },
+      async set(v){ (data[col] = data[col] || {})[id] = clone(v); untomb(col, id); save(); notify(); },
+      async update(v){ const c = data[col] = data[col] || {}; c[id] = {...(c[id]||{}), ...clone(v)}; untomb(col, id); save(); notify(); },
+      async delete(){ if (data[col]) delete data[col][id]; const t = data._deleted = data._deleted || {}; (t[col] = t[col] || {})[id] = Date.now(); save(); notify(); },
       onSnapshot(fn){ const run = () => { const v = data[col] && data[col][id]; fn({id, exists: !!v, data: () => v}); }; subs.add(run); setTimeout(run); return () => subs.delete(run); },
     };
   }
@@ -2444,6 +2488,8 @@ const LocalDB = (() => {
     },
     doc(path){ const [col, id] = path.split('/'); return docRef(col, id); },
     exportAll(){ return clone(data); },
+    replaceAll(obj){ data = clone(obj || {}); save(true); notify(); },
+    setChangeHook(fn){ hook = fn; },
     importAll(obj){
       let n = 0;
       for (const col of ['projects','groups','links','boards','tasks','config']) {
@@ -2455,6 +2501,180 @@ const LocalDB = (() => {
     },
   };
 })();
+
+// ---------- sync with a PRIVATE GitHub repository (data.json) ----------
+// The web app itself is public; the data lives in a separate private repo the user owns.
+// A fine-grained token limited to that one repo is kept in this browser only.
+const SYNC_KEY = 'kld:sync:v1', SYNC_FILE = 'data.json';
+const SYNC_COLS = ['projects','groups','links','boards','tasks','config'];
+const syncDefaults = () => ({repo: 'giadinhmaitrang-creator/Link_task_data', token: '', enabled: false, sha: null, dirty: false, lastSync: 0, lastPull: 0, error: ''});
+let sync = (() => { try { return {...syncDefaults(), ...(JSON.parse(localStorage.getItem(SYNC_KEY)) || {})}; } catch { return syncDefaults(); } })();
+let syncBusy = false, pushTimer = null, pushing = false, pushAgain = false;
+function saveSync(){ try { localStorage.setItem(SYNC_KEY, JSON.stringify(sync)); } catch {} renderSyncBadge(); }
+const stamp = v => (v && (v.updatedAt || v.createdAt)) || 0;
+const hasData = d => SYNC_COLS.some(c => d[c] && Object.keys(d[c]).length && c !== 'config');
+function mergeData(a, b){
+  const out = {_deleted: {}}, keepAfter = Date.now() - 90 * 864e5;
+  for (const col of SYNC_COLS) {
+    const tomb = {...((a._deleted || {})[col] || {})};
+    Object.entries((b._deleted || {})[col] || {}).forEach(([id, t]) => tomb[id] = Math.max(tomb[id] || 0, t));
+    const A = a[col] || {}, B = b[col] || {}, res = {};
+    new Set([...Object.keys(A), ...Object.keys(B)]).forEach(id => {
+      const x = A[id], y = B[id];
+      const v = !x ? y : !y ? x : (stamp(y) > stamp(x) ? y : x);
+      if (tomb[id] && tomb[id] >= stamp(v)) return;
+      res[id] = v;
+    });
+    out[col] = res;
+    out._deleted[col] = Object.fromEntries(Object.entries(tomb).filter(([, t]) => t > keepAfter));
+  }
+  return out;
+}
+const b64enc = str => { const bytes = new TextEncoder().encode(str); let bin = ''; for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000)); return btoa(bin); };
+const b64dec = b64 => new TextDecoder().decode(Uint8Array.from(atob(String(b64).replace(/\s/g, '')), c => c.charCodeAt(0)));
+async function gh(path, opts = {}){
+  let r;
+  try {
+    r = await fetch('https://api.github.com/repos/' + sync.repo + path, {...opts, cache: 'no-store',
+      headers: {Authorization: 'Bearer ' + sync.token, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28', ...(opts.body ? {'Content-Type': 'application/json'} : {})}});
+  } catch { const e = new Error('network'); throw e; }
+  if (!r.ok) { const e = new Error('http'); e.status = r.status; try { e.detail = (await r.json()).message; } catch {} throw e; }
+  return r.status === 204 ? null : r.json();
+}
+function syncErrText(e){
+  if (e.message === 'network') return 'Không kết nối được GitHub. Dữ liệu vẫn lưu trên máy này và sẽ đồng bộ khi có mạng.';
+  if (e.status === 401) return 'Mã truy cập không hợp lệ hoặc đã hết hạn. Hãy tạo mã mới và dán lại.';
+  if (e.status === 403) return 'Mã truy cập không có quyền ghi. Kiểm tra quyền “Contents: Read and write” cho kho dữ liệu.';
+  if (e.status === 404) return 'Không tìm thấy kho hoặc mã không có quyền với kho này. Kiểm tra tên kho và phần “Repository access” của mã.';
+  if (e.message === 'public') return 'Kho dữ liệu đang để CÔNG KHAI nên web không đồng bộ, để tránh lộ dữ liệu. Hãy chuyển kho sang Private.';
+  return 'Lỗi đồng bộ GitHub' + (e.status ? ` (${e.status})` : '') + (e.detail ? `: ${e.detail}` : '');
+}
+async function fetchRemote(){
+  try { const f = await gh('/contents/' + SYNC_FILE); return {sha: f.sha, data: JSON.parse(b64dec(f.content))}; }
+  catch (e) { if (e.status === 404) return null; throw e; }
+}
+function localSnapshot(){ const d = LocalDB.exportAll(); const out = {_deleted: d._deleted || {}}; SYNC_COLS.forEach(c => out[c] = d[c] || {}); return out; }
+async function pushNow(depth = 0){
+  if (!sync.enabled) return;
+  if (pushing) { pushAgain = true; return; }
+  pushing = true; renderSyncBadge();
+  try {
+    const body = {app: 'kho-link-du-an', version: 1, savedAt: new Date().toISOString(), ...localSnapshot()};
+    const r = await gh('/contents/' + SYNC_FILE, {method: 'PUT', body: JSON.stringify({
+      message: `Cập nhật dữ liệu từ ${deviceName()}`, content: b64enc(JSON.stringify(body, null, 1)), ...(sync.sha ? {sha: sync.sha} : {})})});
+    sync.sha = r.content.sha; sync.dirty = false; sync.lastSync = Date.now(); sync.error = '';
+  } catch (e) {
+    if ((e.status === 409 || e.status === 422) && depth < 2) { pushing = false; await pullNow({merge: true, fromPush: true}); return pushNow(depth + 1); }
+    sync.error = syncErrText(e);
+  } finally {
+    pushing = false; saveSync();
+    if (pushAgain) { pushAgain = false; schedulePush(500); }
+  }
+}
+function schedulePush(ms = 3000){ clearTimeout(pushTimer); pushTimer = setTimeout(pushNow, ms); }
+async function pullNow({merge = false, fromPush = false} = {}){
+  if (!sync.enabled || syncBusy) return;
+  syncBusy = true; renderSyncBadge();
+  try {
+    const remote = await fetchRemote();
+    sync.lastPull = Date.now();
+    if (!remote) { sync.sha = null; if (hasData(localSnapshot())) { sync.dirty = true; } }
+    else if (remote.sha !== sync.sha || merge || sync.dirty) {
+      const result = (sync.dirty || merge) ? mergeData(localSnapshot(), remote.data) : remote.data;
+      LocalDB.replaceAll(result);
+      sync.sha = remote.sha;
+    }
+    sync.error = '';
+  } catch (e) { sync.error = syncErrText(e); }
+  finally { syncBusy = false; saveSync(); if (sync.dirty && !sync.error && !fromPush) schedulePush(300); }
+}
+function deviceName(){ const u = navigator.userAgent; return /iPhone|iPad/.test(u) ? 'iPhone/iPad' : /Android/.test(u) ? 'Android' : /Mac/.test(u) ? 'Mac' : /Windows/.test(u) ? 'Windows' : 'trình duyệt'; }
+LocalDB.setChangeHook(() => { if (!sync.enabled) return; sync.dirty = true; saveSync(); schedulePush(); });
+
+// ----- connect / disconnect -----
+function askSyncChoice(nLocal, nRemote){
+  const d = $('#dlgSyncChoice');
+  $('#sc-text').textContent = `Máy này đang có ${nLocal} mục, kho GitHub đang có ${nRemote} mục.`;
+  d.returnValue = ''; d.showModal();
+  return new Promise(res => d.addEventListener('close', () => res(d.returnValue), {once: true}));
+}
+const countItems = d => SYNC_COLS.filter(c => c !== 'config').reduce((s, c) => s + Object.keys(d[c] || {}).length, 0);
+async function connectSync(){
+  const repo = $('#sy-repo').value.trim().replace(/^https?:\/\/github\.com\//, '').replace(/\.git$/, '').replace(/\/$/, '');
+  const token = $('#sy-token').value.trim() || sync.token;
+  if (!/^[\w.-]+\/[\w.-]+$/.test(repo)) { toast('Tên kho phải có dạng tên-tài-khoản/tên-kho'); return; }
+  if (!token) { toast('Hãy dán mã truy cập (github_pat_…)'); $('#sy-token').focus(); return; }
+  const prev = {...sync};
+  sync.repo = repo; sync.token = token;
+  $('#sy-connect').disabled = true; $('#sy-status').textContent = 'Đang kiểm tra kho…';
+  try {
+    const info = await gh('');
+    if (!info.private) throw new Error('public');
+    const remote = await fetchRemote();
+    const local = localSnapshot();
+    let result = null, sha = remote ? remote.sha : null, dirty = false;
+    if (!remote) { dirty = hasData(local); }
+    else if (!hasData(local)) { result = remote.data; }
+    else if (!hasData(remote.data)) { dirty = true; }
+    else {
+      const choice = await askSyncChoice(countItems(local), countItems(remote.data));
+      if (choice === 'merge') { result = mergeData(local, remote.data); dirty = true; }
+      else if (choice === 'remote') { result = remote.data; }
+      else { sync = prev; renderSyncSettings(); return; }
+    }
+    if (result) LocalDB.replaceAll(result);
+    Object.assign(sync, {enabled: true, sha, dirty, lastPull: Date.now(), lastSync: dirty ? sync.lastSync : Date.now(), error: ''});
+    saveSync();
+    $('#sy-token').value = '';
+    if (dirty) await pushNow();
+    toast(sync.error ? sync.error : 'Đã bật đồng bộ GitHub');
+  } catch (e) {
+    sync = {...prev, repo}; saveSync();
+    toast(syncErrText(e));
+  } finally { $('#sy-connect').disabled = false; renderSyncSettings(); }
+}
+function disconnectSync(){
+  clearTimeout(pushTimer);
+  sync = {...syncDefaults(), repo: sync.repo}; saveSync(); renderSyncSettings();
+  toast('Đã ngắt đồng bộ. Dữ liệu vẫn còn trên máy này và trong kho GitHub.');
+}
+
+// ----- UI -----
+function syncState(){
+  if (!sync.enabled) return 'off';
+  if (sync.error) return 'error';
+  if (pushing || syncBusy || sync.dirty) return 'pending';
+  return 'ok';
+}
+function renderSyncBadge(){
+  const st = syncState(), dot = $('#syncDot');
+  if (dot) { dot.className = 'sync-dot ' + st; dot.hidden = st === 'off'; dot.title = {ok: 'Đã đồng bộ GitHub', pending: 'Đang chờ đồng bộ', error: sync.error, off: ''}[st]; }
+  const note = $('#storeNote');
+  if (note) note.innerHTML = st === 'off' ? 'Dữ liệu lưu trên trình duyệt này. Bật <strong>Dữ liệu → Đồng bộ GitHub</strong> để dùng chung trên nhiều máy.' : `Dữ liệu được đồng bộ với kho GitHub riêng tư <span class="mono">${esc(sync.repo.split('/')[1] || sync.repo)}</span>.`;
+  const line = $('#syncLine');
+  if (line) line.textContent = st === 'off' ? 'Chưa bật đồng bộ' : st === 'error' ? 'Lỗi đồng bộ' : st === 'pending' ? 'Đang đồng bộ…' : `Đã đồng bộ ${fmtDate(sync.lastSync)}`;
+  if ($('#dlgSync') && $('#dlgSync').open) renderSyncSettings();
+}
+function renderSyncSettings(){
+  const st = syncState();
+  $('#sy-repo').value = sync.repo;
+  $('#sy-status').innerHTML = st === 'off' ? 'Chưa bật đồng bộ. Dữ liệu chỉ nằm trên máy này.'
+    : st === 'error' ? `<span class="err-dot"></span>${esc(sync.error)}`
+    : st === 'pending' ? `<span class="pend-dot"></span>Đang đồng bộ với <span class="mono">${esc(sync.repo)}</span>…`
+    : `<span class="ok-dot"></span>Đã đồng bộ với <span class="mono">${esc(sync.repo)}</span> · ${fmtDate(sync.lastSync)}`;
+  $('#sy-token').placeholder = sync.enabled ? 'Đã lưu mã trên máy này. Dán mã mới nếu muốn thay.' : 'github_pat_…';
+  $('#sy-connect').textContent = sync.enabled ? 'Lưu và đồng bộ lại' : 'Kết nối và đồng bộ';
+  $('#sy-now').hidden = !sync.enabled; $('#sy-off').hidden = !sync.enabled;
+  $('#sy-history').hidden = !sync.enabled;
+  $('#sy-history').href = `https://github.com/${sync.repo}/commits`;
+  $('#sy-guide').open = !sync.enabled;
+}
+$('#btnSync').addEventListener('click', () => { $('#dataMenu').hidden = true; renderSyncSettings(); $('#dlgSync').showModal(); });
+$('#sy-connect').addEventListener('click', connectSync);
+$('#sy-now').addEventListener('click', async () => { await pullNow({merge: true, fromPush: true}); if (!sync.error) { await pushNow(); toast(sync.error || 'Đã đồng bộ'); } else toast(sync.error); });
+$('#sy-off').addEventListener('click', async () => { $('#dlgSync').close(); if (await confirmAsk('Ngắt đồng bộ GitHub', 'Ngừng đồng bộ và xóa mã truy cập khỏi máy này? Dữ liệu trên máy và trong kho GitHub vẫn được giữ nguyên.', 'Ngắt đồng bộ')) disconnectSync(); });
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && sync.enabled && Date.now() - sync.lastPull > 20000) pullNow(); });
+window.addEventListener('online', () => { if (sync.enabled) pullNow(); });
 
 // ---------- backup: export / import ----------
 $('#btnData').addEventListener('click', e => { e.stopPropagation(); const m = $('#dataMenu'); m.hidden = !m.hidden; $('#btnData').setAttribute('aria-expanded', String(!m.hidden)); });
@@ -2510,6 +2730,8 @@ async function boot(){
   const timer = setTimeout(() => { if (!loaded.p || !loaded.l) { db = null; render(); } }, 10000);
   db = LocalDB;
   await importFromHash();
+  renderSyncBadge();
+  if (sync.enabled) pullNow();
   const onErr = e => { console.error(e); if (e && e.code === 'revoked') { canWrite = false; } toast('Có lỗi khi đọc dữ liệu. Hãy tải lại trang.'); };
   db.collection('projects').onSnapshot(s => { projects = s.docs.map(d => ({id:d.id, ...d.data()})); loaded.p = true; if (loaded.l) clearTimeout(timer); render(); migrateTasks(); }, onErr);
   db.collection('links').onSnapshot(s => { links = s.docs.map(d => ({id:d.id, ...d.data()})); loaded.l = true; if (loaded.p) clearTimeout(timer); render(); }, onErr);

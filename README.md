@@ -22,6 +22,7 @@ Web app lưu trữ và quản lý link website, tài liệu theo **dự án** v�
   - Outlook công ty: nhập file `.ics` xuất từ Outlook (hỗ trợ lịch lặp, ngoại lệ, múi giờ).
   - Lịch theo ngày, khối “Lịch hôm nay” trong *Việc cần chú ý*, số cuộc họp trên thẻ có hạn chót.
   - Lịch chỉ lưu trong trình duyệt, không nằm trong file xuất dữ liệu.
+- **Đồng bộ nhiều máy qua kho GitHub riêng tư**: dữ liệu lưu thành `data.json` trong một kho *private* của bạn (ví dụ `Link_task_data`), dùng fine-grained token chỉ có quyền *Contents* với đúng kho đó. Tự lưu sau mỗi thay đổi, tự tải bản mới khi mở trang, gộp khi hai máy cùng sửa, có lịch sử phiên bản. Web từ chối đồng bộ nếu kho dữ liệu là công khai.
 - Giao diện sáng/tối, dùng được trên điện thoại.
 
 ## Lưu trữ dữ liệu
