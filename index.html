@@ -722,7 +722,7 @@ dialog::backdrop{background:rgba(10,20,16,.45)}
         </ol>
       </details>
     </section>
-    <p class="hint">Lịch chỉ được lưu trong trình duyệt này, <strong>không</strong> nằm trong file “Xuất dữ liệu” và không đưa lên GitHub. Lịch công ty có thể chứa thông tin nội bộ, hãy tuân thủ quy định bảo mật của công ty.</p>
+    <p class="hint">Lịch không nằm trong file “Xuất dữ liệu”. Nếu đã bật <strong>Đồng bộ GitHub</strong>, lịch (cả Gmail và Outlook) được đồng bộ sang các máy khác qua kho riêng tư; máy khác xem được ngay mà không cần đăng nhập Google. Lịch công ty có thể chứa thông tin nội bộ, hãy tuân thủ quy định bảo mật của công ty.</p>
   </div>
   <div class="dlg-foot"><button class="btn" type="button" data-close>Đóng</button></div>
 </div></dialog>
@@ -742,7 +742,7 @@ dialog::backdrop{background:rgba(10,20,16,.45)}
         <li>Dán mã vào ô trên, bấm <strong>Kết nối và đồng bộ</strong>. Làm trước trên máy đang có nhiều dữ liệu nhất, sau đó mới làm trên các máy khác.</li>
       </ol>
     </details>
-    <p class="hint">Web tự lưu lên GitHub vài giây sau mỗi thay đổi, và tải bản mới khi mở hoặc quay lại trang. Mỗi lần lưu là một phiên bản trong lịch sử của kho. Lịch Gmail/Outlook không được đồng bộ.</p>
+    <p class="hint">Web tự lưu lên GitHub vài giây sau mỗi thay đổi, và tải bản mới khi mở hoặc quay lại trang. Mỗi lần lưu là một phiên bản trong lịch sử của kho. Lịch Gmail/Outlook cũng được đồng bộ (cài đặt ẩn/hiện lịch vẫn riêng từng máy).</p>
   </div>
   <div class="dlg-foot"><button class="btn" type="button" data-close>Đóng</button></div>
 </div></dialog>
@@ -2144,7 +2144,14 @@ function loadCal(){
   return d;
 }
 let cal = loadCal(), calBusy = false, calIdx = null;
-function saveCal(){ calIdx = null; try { localStorage.setItem(CAL_KEY, JSON.stringify(cal)); } catch { toast('Không lưu được lịch vào trình duyệt. Bộ nhớ trình duyệt có thể đã đầy.'); } }
+let calHook = null;
+function saveCal(quiet){ calIdx = null; try { localStorage.setItem(CAL_KEY, JSON.stringify(cal)); } catch { toast('Không lưu được lịch vào trình duyệt. Bộ nhớ trình duyệt có thể đã đầy.'); } if (!quiet && calHook) calHook(); }
+// the part of the calendar shared across devices (view settings like hidden/range stay per device)
+function calShared(){
+  const g = cal.google, i = cal.ics;
+  return {google: {clientId: g.clientId, email: g.email, calendars: g.calendars, events: g.events, syncedAt: g.syncedAt, changedAt: g.changedAt || 0, by: g.by || ''},
+          ics: {events: i.events, importedAt: i.importedAt, fileName: i.fileName, changedAt: i.changedAt || 0, by: i.by || ''}};
+}
 const gConnected = () => !!cal.google.syncedAt;
 const calConfigured = () => gConnected() || !!cal.ics.importedAt;
 const pad2 = n => String(n).padStart(2,'0');
@@ -2401,13 +2408,13 @@ $('#tk-due').addEventListener('input', dueCalHint);
 function renderCalSettings(){
   $('#cal-cid').value = cal.google.clientId || '';
   $('#cal-g-status').innerHTML = gConnected()
-    ? `<span class="ok-dot"></span>Đã kết nối <strong>${esc(cal.google.email || 'Google')}</strong> · ${cal.google.events.length} sự kiện · cập nhật ${fmtDate(cal.google.syncedAt)}`
+    ? `<span class="ok-dot"></span>Đã kết nối <strong>${esc(cal.google.email || 'Google')}</strong> · ${cal.google.events.length} sự kiện · cập nhật ${fmtDate(cal.google.syncedAt)}${cal.google.by ? ` từ ${esc(cal.google.by)}` : ''}${gTokenValid() ? '' : '<br><span class="hint">Máy này chưa đăng nhập Google: vẫn xem được lịch đồng bộ từ máy khác; bấm “Làm mới lịch Google” để tự cập nhật.</span>'}`
     : 'Chưa kết nối.';
   $('#cal-g-connect').textContent = gConnected() ? 'Làm mới lịch Google' : 'Kết nối Google Calendar';
   $('#cal-g-connect').disabled = calBusy;
   $('#cal-g-disconnect').hidden = !gConnected();
   $('#cal-o-status').innerHTML = cal.ics.importedAt
-    ? `<span class="ok-dot"></span>Đã nhập <strong>${cal.ics.events.length}</strong> sự kiện từ <span class="mono">${esc(cal.ics.fileName)}</span> · ${fmtDate(cal.ics.importedAt)}`
+    ? `<span class="ok-dot"></span>Đã nhập <strong>${cal.ics.events.length}</strong> sự kiện từ <span class="mono">${esc(cal.ics.fileName)}</span> · ${fmtDate(cal.ics.importedAt)}${cal.ics.by ? ` từ ${esc(cal.ics.by)}` : ''}`
     : 'Chưa nhập file lịch nào.';
   $('#cal-o-clear').hidden = !cal.ics.importedAt;
 }
@@ -2426,12 +2433,12 @@ $('#cal-g-connect').addEventListener('click', () => {
 });
 $('#cal-g-disconnect').addEventListener('click', async () => {
   $('#dlgCal').close();
-  if (await confirmAsk('Ngắt kết nối Google Calendar', 'Thu hồi quyền xem lịch và xóa lịch Gmail đã lưu trong trình duyệt này? Lịch trên Google không bị ảnh hưởng.', 'Ngắt kết nối')) disconnectGoogle();
+  if (await confirmAsk('Ngắt kết nối Google Calendar', `Thu hồi quyền xem lịch và xóa lịch Gmail đã lưu${sync.enabled ? ' trên mọi máy đang đồng bộ' : ' trong trình duyệt này'}? Lịch trên Google không bị ảnh hưởng.`, 'Ngắt kết nối')) disconnectGoogle();
 });
 $('#cal-o-import').addEventListener('click', pickIcs);
 $('#cal-o-clear').addEventListener('click', async () => {
   $('#dlgCal').close();
-  if (await confirmAsk('Xóa lịch Outlook', 'Xóa lịch Outlook đã nhập khỏi trình duyệt này? Lịch trong Outlook không bị ảnh hưởng.')) { cal.ics = calDefaults().ics; saveCal(); render(); toast('Đã xóa lịch Outlook'); }
+  if (await confirmAsk('Xóa lịch Outlook', `Xóa lịch Outlook đã nhập${sync.enabled ? ' trên mọi máy đang đồng bộ' : ' khỏi trình duyệt này'}? Lịch trong Outlook không bị ảnh hưởng.`)) { cal.ics = calDefaults().ics; saveCal(); render(); toast('Đã xóa lịch Outlook'); }
 });
 
 // ----- events -----
@@ -2528,6 +2535,8 @@ function mergeData(a, b){
     out[col] = res;
     out._deleted[col] = Object.fromEntries(Object.entries(tomb).filter(([, t]) => t > keepAfter));
   }
+  const ca = a.calendar || {}, cb = b.calendar || {}, newer = (x, y) => !x ? y : !y ? x : ((y.changedAt || 0) > (x.changedAt || 0) ? y : x);
+  out.calendar = {google: newer(ca.google, cb.google) || null, ics: newer(ca.ics, cb.ics) || null};
   return out;
 }
 const b64enc = str => { const bytes = new TextEncoder().encode(str); let bin = ''; for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000)); return btoa(bin); };
@@ -2553,7 +2562,25 @@ async function fetchRemote(){
   try { const f = await gh('/contents/' + SYNC_FILE); return {sha: f.sha, data: JSON.parse(b64dec(f.content))}; }
   catch (e) { if (e.status === 404) return null; throw e; }
 }
-function localSnapshot(){ const d = LocalDB.exportAll(); const out = {_deleted: d._deleted || {}}; SYNC_COLS.forEach(c => out[c] = d[c] || {}); return out; }
+function localSnapshot(){ const d = LocalDB.exportAll(); const out = {_deleted: d._deleted || {}, calendar: calShared()}; SYNC_COLS.forEach(c => out[c] = d[c] || {}); return out; }
+const calSigs = () => ({g: JSON.stringify([cal.google.clientId, cal.google.email, cal.google.calendars, cal.google.events]), i: JSON.stringify([cal.ics.events, cal.ics.fileName, cal.ics.importedAt])});
+let lastCalSig = calSigs();
+calHook = () => {
+  const s = calSigs(); let changed = false;
+  if (s.g !== lastCalSig.g) { cal.google.changedAt = Date.now(); cal.google.by = deviceName(); changed = true; }
+  if (s.i !== lastCalSig.i) { cal.ics.changedAt = Date.now(); cal.ics.by = deviceName(); changed = true; }
+  lastCalSig = s;
+  if (!changed) return;
+  saveCal(true);
+  if (sync.enabled) { sync.dirty = true; saveSync(); schedulePush(); }
+};
+function applyCalShared(c){
+  if (!c) return;
+  if (c.google) cal.google = {...calDefaults().google, ...c.google};
+  if (c.ics) cal.ics = {...calDefaults().ics, ...c.ics};
+  lastCalSig = calSigs(); saveCal(true); render();
+}
+function applyRemote(result){ LocalDB.replaceAll(result); applyCalShared(result.calendar); }
 async function pushNow(depth = 0){
   if (!sync.enabled) return;
   if (pushing) { pushAgain = true; return; }
@@ -2581,8 +2608,9 @@ async function pullNow({merge = false, fromPush = false} = {}){
     if (!remote) { sync.sha = null; if (hasData(localSnapshot())) { sync.dirty = true; } }
     else if (remote.sha !== sync.sha || merge || sync.dirty) {
       const result = (sync.dirty || merge) ? mergeData(localSnapshot(), remote.data) : remote.data;
-      LocalDB.replaceAll(result);
+      applyRemote(result);
       sync.sha = remote.sha;
+      if (!remote.data.calendar && (cal.google.syncedAt || cal.ics.importedAt)) sync.dirty = true;
     }
     sync.error = '';
   } catch (e) { sync.error = syncErrText(e); }
@@ -2613,16 +2641,16 @@ async function connectSync(){
     const remote = await fetchRemote();
     const local = localSnapshot();
     let result = null, sha = remote ? remote.sha : null, dirty = false;
-    if (!remote) { dirty = hasData(local); }
+    if (!remote) { dirty = hasData(local) || !!(cal.google.syncedAt || cal.ics.importedAt); }
     else if (!hasData(local)) { result = remote.data; }
-    else if (!hasData(remote.data)) { dirty = true; }
+    else if (!hasData(remote.data)) { result = mergeData(local, remote.data); dirty = true; }
     else {
       const choice = await askSyncChoice(countItems(local), countItems(remote.data));
       if (choice === 'merge') { result = mergeData(local, remote.data); dirty = true; }
       else if (choice === 'remote') { result = remote.data; }
       else { sync = prev; renderSyncSettings(); return; }
     }
-    if (result) LocalDB.replaceAll(result);
+    if (result) applyRemote(result);
     Object.assign(sync, {enabled: true, sha, dirty, lastPull: Date.now(), lastSync: dirty ? sync.lastSync : Date.now(), error: ''});
     saveSync();
     $('#sy-token').value = '';

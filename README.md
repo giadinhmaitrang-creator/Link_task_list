@@ -21,7 +21,7 @@ Web app lưu trữ và quản lý link website, tài liệu theo **dự án** v�
   - Google Calendar cá nhân: đăng nhập Google với quyền chỉ đọc (`calendar.readonly`), tự cập nhật. Cần tạo Client ID trên Google Cloud (hướng dẫn trong *Lịch → Cài đặt lịch*), origin: `https://giadinhmaitrang-creator.github.io`.
   - Outlook công ty: nhập file `.ics` xuất từ Outlook (hỗ trợ lịch lặp, ngoại lệ, múi giờ).
   - Lịch theo ngày, khối “Lịch hôm nay” trong *Việc cần chú ý*, số cuộc họp trên thẻ có hạn chót.
-  - Lịch chỉ lưu trong trình duyệt, không nằm trong file xuất dữ liệu.
+  - Không nằm trong file xuất dữ liệu; khi bật Đồng bộ GitHub thì lịch (sự kiện Gmail đã lấy về, Client ID, lịch Outlook đã nhập) được đồng bộ sang các máy khác. Cài đặt ẩn/hiện lịch vẫn riêng từng máy.
 - **Đồng bộ nhiều máy qua kho GitHub riêng tư**: dữ liệu lưu thành `data.json` trong một kho *private* của bạn (ví dụ `Link_task_data`), dùng fine-grained token chỉ có quyền *Contents* với đúng kho đó. Tự lưu sau mỗi thay đổi, tự tải bản mới khi mở trang, gộp khi hai máy cùng sửa, có lịch sử phiên bản. Web từ chối đồng bộ nếu kho dữ liệu là công khai.
 - Giao diện sáng/tối, dùng được trên điện thoại.
 
